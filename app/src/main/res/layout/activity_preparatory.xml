@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="300dp"
+        android:layout_height="64dp"
+        android:text="使用准备"
+        android:textSize="32sp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="16dp" />
+
+    <TextView
+        android:layout_width="300dp"
+        android:layout_height="64dp"
+        android:text="1、软件原理：xxxxxxxxx"
+        android:textSize="16sp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="16dp" />
+
+    <LinearLayout
+        android:layout_width="300dp"
+        android:layout_height="100dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="200dp"
+            android:layout_height="64dp"
+            android:text="2、（必需）打开无障碍服务"
+            android:textSize="16sp" />
+
+        <Button
+            android:id="@+id/pbt0"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:text="点击打开"
+            android:textSize="12sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="300dp"
+        android:layout_height="100dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="200dp"
+            android:layout_height="64dp"
+            android:text="3、（必需）打开更改系统设置权限"
+            android:textSize="16sp" />
+
+        <Button
+            android:id="@+id/pbt1"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:text="点击设置"
+            android:textSize="12sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="300dp"
+        android:layout_height="100dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="200dp"
+            android:layout_height="64dp"
+            android:text="4、（非必需）打开自启动，关闭省电优化"
+            android:textSize="16sp" />
+
+        <Button
+            android:id="@+id/pbt3"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:text="点击设置"
+            android:textSize="12sp" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="64dp" />
+
+    <Button
+        android:id="@+id/pbt2"
+        android:layout_width="120dp"
+        android:layout_height="70dp"
+        android:text="完成"
+        android:textSize="24sp" />
+
+</LinearLayout>
+

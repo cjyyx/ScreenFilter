@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/tv_list_brightness_point_light"
+        android:layout_width="100dp"
+        android:layout_height="16dp"
+        android:gravity="center"
+        android:text="光照: 0 lux"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/tv_list_brightness_point_brightness"
+        android:layout_width="100dp"
+        android:layout_height="32dp"
+        android:gravity="center"
+        android:text="亮度: 0 %"
+        android:textSize="12sp" />
+
+    <View
+        android:layout_width="16dp"
+        android:layout_height="match_parent" />
+
+    <Button
+        android:id="@+id/bt_list_brightness_point_delete"
+        android:layout_width="80dp"
+        android:layout_height="44dp"
+        android:text="删除"
+        android:textSize="10sp" />
+
+    <View
+        android:layout_width="16dp"
+        android:layout_height="match_parent" />
+
+    <Button
+        android:id="@+id/bt_list_brightness_point_modify"
+        android:layout_width="80dp"
+        android:layout_height="44dp"
+        android:text="修改"
+        android:textSize="10sp" />
+
+</LinearLayout>
