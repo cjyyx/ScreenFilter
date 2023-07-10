@@ -31,9 +31,7 @@ public class PreparatoryActivity extends AppCompatActivity {
 
         pbt0.setOnClickListener(view -> onButton0());
         pbt1.setOnClickListener(view -> onButton1());
-
         pbt2.setOnClickListener(view -> onButton2());
-
         pbt3.setOnClickListener(view -> onButton3());
 
 //        Timer timer = new Timer();
@@ -66,15 +64,24 @@ public class PreparatoryActivity extends AppCompatActivity {
     }
 
     private void onButton1() {
-
-        if (GlobalStatus.isReady()) {
-            Toast.makeText(this, "系统设置权限已开启", Toast.LENGTH_SHORT).show();
-        } else {
-            Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-            Uri uri = Uri.fromParts("package", "com.cjyyxn.screenfilter", null);
-            intent.setData(uri);
+        if (!Settings.System.canWrite(this)) {
+            // 如果权限尚未授予，则请求权限
+            Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
+            intent.setData(Uri.parse("package:" + getPackageName()));
             startActivity(intent);
+        } else {
+            // 如果权限已经授予，则执行需要权限的操作
+            Toast.makeText(this, "系统设置权限已开启", Toast.LENGTH_SHORT).show();
         }
+
+//        if (GlobalStatus.isReady()) {
+//
+//        } else {
+//            Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+//            Uri uri = Uri.fromParts("package", "com.cjyyxn.screenfilter", null);
+//            intent.setData(uri);
+//            startActivity(intent);
+//        }
     }
 
     private void onButton2() {
@@ -87,8 +94,8 @@ public class PreparatoryActivity extends AppCompatActivity {
 
     private void onButton3() {
         Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-        Uri uri = Uri.fromParts("package", "com.cjyyxn.screenfilter", null);
-        intent.setData(uri);
+//        Uri uri = Uri.fromParts("package", "com.cjyyxn.screenfilter", null);
+        intent.setData(Uri.parse("package:" + getPackageName()));
         startActivity(intent);
     }
 }

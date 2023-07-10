@@ -200,19 +200,22 @@ public class BrightnessManager {
                         float userb = GlobalStatus.getSystemBrightness();
                         if ((userb - bset) > AppConfig.BRIGHTNESS_ADJUSTMENT_TOLERANCE) {
                             // 用户调节亮度过高
-                            keepenBrightness = bset + AppConfig.BRIGHTNESS_ADJUSTMENT_TOLERANCE * AppConfig.USER_ADJUSTMENT_FACTOR;
+                            keepenBrightness = bset + AppConfig.BRIGHTNESS_ADJUSTMENT_TOLERANCE * AppConfig.BRIGHTNESS_ADJUSTMENT_FACTOR;
                         } else if ((bset - userb) > AppConfig.BRIGHTNESS_ADJUSTMENT_TOLERANCE) {
                             // 用户调节亮度过低
-                            keepenBrightness = bset - AppConfig.BRIGHTNESS_ADJUSTMENT_TOLERANCE * AppConfig.USER_ADJUSTMENT_FACTOR;
+                            keepenBrightness = bset - AppConfig.BRIGHTNESS_ADJUSTMENT_TOLERANCE * AppConfig.BRIGHTNESS_ADJUSTMENT_FACTOR;
                         } else {
                             // 用户调节亮度处于容差之内
                             keepenBrightness = userb;
                         }
                     } else {
                         // 用来稳定亮度
-                        if (Math.abs(bset - keepenBrightness) > AppConfig.BRIGHTNESS_ADJUSTMENT_TOLERANCE) {
-                            // 环境光照变化超出容差
-                            keepenBrightness = bset;
+                        if ((bset - keepenBrightness) > AppConfig.BRIGHTNESS_ADJUSTMENT_TOLERANCE) {
+                            // 环境光照高于容差
+                            keepenBrightness = bset - AppConfig.BRIGHTNESS_ADJUSTMENT_TOLERANCE * AppConfig.BRIGHTNESS_ADJUSTMENT_FACTOR / 2f;
+                        } else if ((keepenBrightness - bset) > AppConfig.BRIGHTNESS_ADJUSTMENT_TOLERANCE) {
+                            // 环境光照低于于容差
+                            keepenBrightness = bset + AppConfig.BRIGHTNESS_ADJUSTMENT_TOLERANCE * AppConfig.BRIGHTNESS_ADJUSTMENT_FACTOR / 2f;
                         }
                     }
 
@@ -285,6 +288,7 @@ public class BrightnessManager {
             Log.d("ccjy", "关闭自动亮度失败");
         }
         GlobalStatus.openFilter();
+        GlobalStatus.setBrightness(calculateBrightnessByLight(GlobalStatus.light));
     }
 
     /**

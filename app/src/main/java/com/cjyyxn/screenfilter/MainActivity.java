@@ -25,16 +25,6 @@ public class MainActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
 
-//        Log.d("ccjy", "开始 isAccessibility 检查");
-
-//        // 可能GlobalStatus加载需要时间，只能这样判断 isAccessibility
-//        for (int i = 0; i < 10000; i++) {
-//            if (GlobalStatus.isAccessibility()) {
-//                Log.d("ccjy", "isAccessibility = true, i = " + i);
-//                break;
-//            }
-//        }
-
         if (!GlobalStatus.isReady()){
             Toast.makeText(this, "未设置必须的权限", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(this, PreparatoryActivity.class));

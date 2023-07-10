@@ -161,11 +161,12 @@ public class GlobalStatus {
         if (brightnessManager != null) {
             brightnessManager.clearBrightnessPointList();
             addBrightnessPoint(0, 0f);
-            addBrightnessPoint(10, 0.1f);
-            addBrightnessPoint(30, 0.28f);
-            addBrightnessPoint(42, 0.34f);
-            addBrightnessPoint(60, 0.4f);
-            addBrightnessPoint(250, 0.6f);
+            addBrightnessPoint(10, 0.05f);
+            addBrightnessPoint(30, 0.16f);
+            addBrightnessPoint(60, 0.25f);
+            addBrightnessPoint(100, 0.36f);
+            addBrightnessPoint(200, 0.5f);
+            addBrightnessPoint(500, 0.8f);
             addBrightnessPoint(1000, 1f);
             addBrightnessPoint(GlobalStatus.getHighLightThreshold(), 1f);
         }
