@@ -1,5 +1,6 @@
 package com.cjyyxn.screenfilter.ui;
 
+import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
@@ -20,42 +21,43 @@ import com.cjyyxn.screenfilter.R;
 import java.util.Timer;
 import java.util.TimerTask;
 
+@SuppressLint("UseSwitchCompatOrMaterialCode")
 public class MainUI {
 
-    private MainActivity mainActivity;
+    private final MainActivity mainActivity;
 
-    private TextView tv_main_light;
-    private TextView tv_main_brightness;
-    private Button bt_main_open_brightness_point_view;
-    private Switch sw_main_filter;
-    private Switch sw_main_intelligent_brightness;
+    private final TextView tv_main_light;
+    private final TextView tv_main_brightness;
+    private final Button bt_main_open_brightness_point_view;
+    private final Switch sw_main_filter;
+    private final Switch sw_main_intelligent_brightness;
     /**
      * 最低硬件亮度 0,100 -> 0,100
      */
-    private SeekBar sb_main_min_hardware_brightness;
-    private TextView tv_main_min_hardware_brightness;
+    private final SeekBar sb_main_min_hardware_brightness;
+    private final TextView tv_main_min_hardware_brightness;
     /**
-     * 最高滤镜不透明度 0,100 -> 95,100
+     * 最高滤镜不透明度 0,100 -> 80,100
      */
-    private SeekBar sb_main_max_filter_opacity;
-    private TextView tv_main_max_filter_opacity;
+    private final SeekBar sb_main_max_filter_opacity;
+    private final TextView tv_main_max_filter_opacity;
     /**
      * 高光照阈值 0,50 -> 1000,6000
      */
-    private SeekBar sb_main_high_light_threshold;
-    private TextView tv_main_high_light_threshold;
-    private Button bt_main_load_default_config;
-    private Button bt_main_open_preparatory_view;
+    private final SeekBar sb_main_high_light_threshold;
+    private final TextView tv_main_high_light_threshold;
+    private final Button bt_main_load_default_config;
+    private final Button bt_main_open_preparatory_view;
 
     /**
      * 主界面用户设置屏幕亮度 0,100 -> 0,1
      * 应与系统状态栏亮度同步
      */
-    private SeekBar sb_main_brightness_set_by_user;
-    private TextView tv_main_brightness_set_by_user;
+    private final SeekBar sb_main_brightness_set_by_user;
+    private final TextView tv_main_brightness_set_by_user;
 
-    private Button bt_main_open_debug_view;
-    private Button bt_main_hide_in_multitasking_interface;
+    private final Button bt_main_open_debug_view;
+    private final Button bt_main_hide_in_multitasking_interface;
 
     public MainUI(MainActivity act) {
         mainActivity = act;
@@ -184,11 +186,11 @@ public class MainUI {
         sb_main_max_filter_opacity.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                float mfo = 0.9f + ((float) progress) * (0.1f / 100f);
+                float mfo = 0.8f + ((float) progress) * (0.2f / 100f);
                 GlobalStatus.setMaxFilterOpacity(mfo);
 
                 tv_main_max_filter_opacity.setText(String.format(
-                        "%.2f %%", GlobalStatus.getMaxFilterOpacity() * 100
+                        "%.1f %%", GlobalStatus.getMaxFilterOpacity() * 100
                 ));
             }
 
@@ -266,10 +268,10 @@ public class MainUI {
                     sb_main_min_hardware_brightness.setProgress((int) (GlobalStatus.getMinHardwareBrightness() * 100 + 0.5));
 
                     tv_main_max_filter_opacity.setText(String.format(
-                            "%.2f %%", GlobalStatus.getMaxFilterOpacity() * 100
+                            "%.1f %%", GlobalStatus.getMaxFilterOpacity() * 100
                     ));
                     sb_main_max_filter_opacity.setProgress((int) (
-                            (GlobalStatus.getMaxFilterOpacity() - 0.9f) * (100f / 0.1f) + 0.5
+                            (GlobalStatus.getMaxFilterOpacity() - 0.8f) * (100f / 0.2f) + 0.5
                     ));
 
                     tv_main_high_light_threshold.setText(String.format(

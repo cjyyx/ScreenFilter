@@ -91,12 +91,12 @@ public class BrightnessManager {
      * 当屏幕滤镜模式开时，调用屏幕滤镜设置亮度
      */
     public void setBrightness(float brightness) {
-        if(!GlobalStatus.isFilterOpenMode()){
+        if (!GlobalStatus.isFilterOpenMode()) {
             return;
         }
 
-        // 实际亮度 = 系统亮度 * (1 - 不透明度)
-        // 不透明度 = 1 - 实际亮度 / 系统亮度
+        // 实际亮度 = 硬件亮度 * ( 1 - 不透明度 )^2
+        // 不透明度 = 1 - sqrt( 实际亮度 / 硬件亮度 )
 
         float sb;
         float fo;
@@ -106,7 +106,7 @@ public class BrightnessManager {
             fo = 0;
         } else {
             sb = GlobalStatus.getMinHardwareBrightness();
-            fo = 1 - brightness / sb;
+            fo = 1f - (float) Math.sqrt((double) brightness / sb);
 
             if (fo > GlobalStatus.getMaxFilterOpacity()) {
                 fo = GlobalStatus.getMaxFilterOpacity();
@@ -137,7 +137,7 @@ public class BrightnessManager {
             @Override
             public void run() {
 
-                if(GlobalStatus.isTempControlMode()){
+                if (GlobalStatus.isTempControlMode()) {
                     return;
                 }
 
@@ -250,7 +250,7 @@ public class BrightnessManager {
             Log.d("ccjy", "开启自动亮度失败");
         }
 
-        GlobalStatus.systemBrightness=GlobalStatus.systemBrightness;
+        GlobalStatus.systemBrightness = GlobalStatus.systemBrightness;
     }
 
     private void closeSystemAutoBrightnessMode() {

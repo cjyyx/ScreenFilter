@@ -161,12 +161,12 @@ public class GlobalStatus {
         setIntelligentBrightnessOpenMode(true);
         setSunlightPatternOpenMode(true);
         setHighLightThreshold(4000f);
-        setMaxFilterOpacity(0.95f);
+        setMaxFilterOpacity(0.9f);
         setMinHardwareBrightness(0.5f);
 
         if (brightnessManager != null) {
             brightnessManager.clearBrightnessPointList();
-            addBrightnessPoint(0, 0.05f);
+            addBrightnessPoint(0, 0f);
             addBrightnessPoint(10, 0.1f);
             addBrightnessPoint(30, 0.2f);
             addBrightnessPoint(42, 0.34f);
