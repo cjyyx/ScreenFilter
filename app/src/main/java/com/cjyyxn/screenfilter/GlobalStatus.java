@@ -168,7 +168,7 @@ public class GlobalStatus {
             brightnessManager.clearBrightnessPointList();
             addBrightnessPoint(0, 0f);
             addBrightnessPoint(10, 0.1f);
-            addBrightnessPoint(30, 0.2f);
+            addBrightnessPoint(30, 0.28f);
             addBrightnessPoint(42, 0.34f);
             addBrightnessPoint(60, 0.4f);
             addBrightnessPoint(250, 0.6f);
@@ -177,16 +177,6 @@ public class GlobalStatus {
         }
     }
 
-
-//    /**
-//     * 当传感器获得的光照强度变化后调用
-//     */
-//    public static void onLightChanged(float l) {
-//        light = l;
-//        if (isReady()) {
-//            brightnessManager.onLightChanged(light);
-//        }
-//    }
 
     /**
      * 当无障碍服务已打开，应用所需的各权限都满足后，返回 true
@@ -204,19 +194,13 @@ public class GlobalStatus {
 
     public static void openFilter() {
         if (isReady()) {
-            new Handler(Looper.getMainLooper()).post(() -> {
-                // 在UI线程中更新UI组件
                 filterViewManager.open();
-            });
         }
     }
 
     public static void closeFilter() {
         if (isReady()) {
-            new Handler(Looper.getMainLooper()).post(() -> {
-                // 在UI线程中更新UI组件
                 filterViewManager.close();
-            });
         }
     }
 
@@ -235,10 +219,7 @@ public class GlobalStatus {
      */
     public static void setFilterOpacity(float alpha) {
         if (isReady()) {
-            new Handler(Looper.getMainLooper()).post(() -> {
-                // 在UI线程中更新UI组件
-                filterViewManager.setAlpha(alpha);
-            });
+            filterViewManager.setAlpha(alpha);
         }
     }
 
@@ -253,10 +234,7 @@ public class GlobalStatus {
      */
     public static void setHardwareBrightness(float brightness) {
         if (isReady()) {
-            new Handler(Looper.getMainLooper()).post(() -> {
-                // 在UI线程中更新UI组件
-                filterViewManager.setHardwareBrightness(brightness);
-            });
+            filterViewManager.setHardwareBrightness(brightness);
         }
     }
 
@@ -318,12 +296,9 @@ public class GlobalStatus {
             }, null);
 
             // 延时后打开系统截图服务
-            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    Log.d("ccjy", "开启系统截图服务");
-                    appAccessibilityService.performGlobalAction(GLOBAL_ACTION_TAKE_SCREENSHOT);
-                }
+            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                Log.d("ccjy", "开启系统截图服务");
+                appAccessibilityService.performGlobalAction(GLOBAL_ACTION_TAKE_SCREENSHOT);
             }, 200);
         }
     }

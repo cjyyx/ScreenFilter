@@ -2,7 +2,6 @@ package com.cjyyxn.screenfilter.quicksetting;
 
 import android.service.quicksettings.Tile;
 import android.service.quicksettings.TileService;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.cjyyxn.screenfilter.GlobalStatus;
@@ -13,7 +12,7 @@ import java.util.TimerTask;
 public class QuickSettingFilter extends TileService {
 
     @Override
-    public  void  onCreate(){
+    public void onCreate() {
         super.onCreate();
 
         TimerTask task = new TimerTask() {
@@ -36,7 +35,7 @@ public class QuickSettingFilter extends TileService {
                         }
                     }
                     getQsTile().updateTile();
-                }catch (Exception e){
+                } catch (Exception e) {
 //                    e.printStackTrace();
                 }
             }

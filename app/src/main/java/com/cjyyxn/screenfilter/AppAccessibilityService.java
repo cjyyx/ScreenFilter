@@ -64,14 +64,13 @@ public class AppAccessibilityService extends AccessibilityService {
             public void run() {
                 GlobalStatus.systemBrightness = getSystemBrightness();
 
-                // 获取系统亮度模式设置
-                ContentResolver contentResolver = getContentResolver();
-                int mode = 0;
                 try {
-                    mode = Settings.System.getInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS_MODE);
+                    // 获取系统亮度模式设置
+                    ContentResolver contentResolver = getContentResolver();
+                    int mode = Settings.System.getInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS_MODE);
                     if (mode == Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC) {
                         // 系统自动亮度开启
-                        GlobalStatus.brightness=GlobalStatus.systemBrightness;
+                        GlobalStatus.brightness = GlobalStatus.systemBrightness;
                     }
                 } catch (Settings.SettingNotFoundException e) {
                     e.printStackTrace();
@@ -115,7 +114,7 @@ public class AppAccessibilityService extends AccessibilityService {
 //        float b = (float) (Math.log(p) / Math.log(2)) / 7;
 //        b = Math.max(b, 0);
 //        return b;
-        return ((float) p)/128f;
+        return ((float) p) / 128f;
     }
 
     /**
@@ -133,6 +132,7 @@ public class AppAccessibilityService extends AccessibilityService {
 //                brightness * 100, bv
 //        ));
     }
+
     public boolean isReady() {
         return Settings.System.canWrite(this);
     }

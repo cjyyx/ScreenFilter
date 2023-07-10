@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -30,32 +29,12 @@ public class PreparatoryActivity extends AppCompatActivity {
         pbt2 = findViewById(R.id.pbt2);
         pbt3 = findViewById(R.id.pbt3);
 
-        pbt0.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onButton0();
-            }
-        });
-        pbt1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onButton1();
-            }
-        });
+        pbt0.setOnClickListener(view -> onButton0());
+        pbt1.setOnClickListener(view -> onButton1());
 
-        pbt2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onButton2();
-            }
-        });
+        pbt2.setOnClickListener(view -> onButton2());
 
-        pbt3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onButton3();
-            }
-        });
+        pbt3.setOnClickListener(view -> onButton3());
 
 //        Timer timer = new Timer();
 //        TimerTask task = new TimerTask() {

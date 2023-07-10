@@ -18,7 +18,8 @@
     <TextView
         android:layout_width="300dp"
         android:layout_height="64dp"
-        android:text="1、软件原理：xxxxxxxxx"
+        android:autoLink="web"
+        android:text="1、项目源码: https://github.com/cjyyx/ScreenFilter"
         android:textSize="16sp" />
 
     <View

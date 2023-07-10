@@ -6,9 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
-import android.view.View;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -21,7 +19,7 @@ import com.cjyyxn.screenfilter.R;
 import java.util.Timer;
 import java.util.TimerTask;
 
-@SuppressLint("UseSwitchCompatOrMaterialCode")
+@SuppressLint({"DefaultLocale", "UseSwitchCompatOrMaterialCode"})
 public class MainUI {
 
     private final MainActivity mainActivity;
@@ -86,78 +84,34 @@ public class MainUI {
     }
 
     private void setUI() {
-        bt_main_open_brightness_point_view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mainActivity.startActivity(new Intent(mainActivity, BrightnessPointActivity.class));
-            }
+        bt_main_open_brightness_point_view.setOnClickListener(view -> mainActivity.startActivity(new Intent(mainActivity, BrightnessPointActivity.class)));
+
+        bt_main_load_default_config.setOnClickListener(view -> {
+            GlobalStatus.loadDefaultConfig();
+            Toast.makeText(mainActivity, "默认配置加载成功", Toast.LENGTH_SHORT).show();
         });
 
-        bt_main_load_default_config.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                GlobalStatus.loadDefaultConfig();
-                Toast.makeText(mainActivity, "默认配置加载成功", Toast.LENGTH_SHORT).show();
-            }
-        });
+        bt_main_open_preparatory_view.setOnClickListener(view -> mainActivity.startActivity(new Intent(mainActivity, PreparatoryActivity.class)));
 
-        bt_main_open_preparatory_view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mainActivity.startActivity(new Intent(mainActivity, PreparatoryActivity.class));
-            }
-        });
+        bt_main_open_debug_view.setOnClickListener(view -> mainActivity.startActivity(new Intent(mainActivity, DebugActivity.class)));
 
-        bt_main_open_debug_view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mainActivity.startActivity(new Intent(mainActivity, DebugActivity.class));
-            }
-        });
-
-        bt_main_hide_in_multitasking_interface.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                try {
-                    ActivityManager service = (ActivityManager) mainActivity.getSystemService(Context.ACTIVITY_SERVICE);
-                    for (ActivityManager.AppTask task : service.getAppTasks()) {
-                        if (task.getTaskInfo().taskId == mainActivity.getTaskId()) {
-                            task.setExcludeFromRecents(true);
-                            Toast.makeText(mainActivity, "多任务界面隐藏成功", Toast.LENGTH_SHORT).show();
-                        }
+        bt_main_hide_in_multitasking_interface.setOnClickListener(view -> {
+            try {
+                ActivityManager service = (ActivityManager) mainActivity.getSystemService(Context.ACTIVITY_SERVICE);
+                for (ActivityManager.AppTask task : service.getAppTasks()) {
+                    if (task.getTaskInfo().taskId == mainActivity.getTaskId()) {
+                        task.setExcludeFromRecents(true);
+                        Toast.makeText(mainActivity, "多任务界面隐藏成功", Toast.LENGTH_SHORT).show();
                     }
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                    Toast.makeText(mainActivity, "多任务界面隐藏失败", Toast.LENGTH_SHORT).show();
                 }
-
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                Toast.makeText(mainActivity, "多任务界面隐藏失败", Toast.LENGTH_SHORT).show();
             }
         });
 
-        sw_main_filter.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    // 当 Switch 组件的状态变为打开时执行的代码
-                    GlobalStatus.setFilterOpenMode(true);
-                } else {
-                    // 当 Switch 组件的状态变为关闭时执行的代码
-                    GlobalStatus.setFilterOpenMode(false);
-                }
-            }
-        });
-
-        sw_main_intelligent_brightness.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    // 当 Switch 组件的状态变为打开时执行的代码
-                    GlobalStatus.setIntelligentBrightnessOpenMode(true);
-                } else {
-                    // 当 Switch 组件的状态变为关闭时执行的代码
-                    GlobalStatus.setIntelligentBrightnessOpenMode(false);
-                }
-            }
-        });
+        sw_main_filter.setOnCheckedChangeListener((buttonView, isChecked) -> GlobalStatus.setFilterOpenMode(isChecked));
+        sw_main_intelligent_brightness.setOnCheckedChangeListener((buttonView, isChecked) -> GlobalStatus.setIntelligentBrightnessOpenMode(isChecked));
 
         sb_main_min_hardware_brightness.setMin(0);
         sb_main_min_hardware_brightness.setMax(100);
@@ -257,7 +211,6 @@ public class MainUI {
 
                 new Handler(Looper.getMainLooper()).post(() -> {
                     // 在UI线程中更新UI组件
-
 
                     tv_main_light.setText(String.format("当前环境光照: %.1f lux", GlobalStatus.light));
                     tv_main_brightness.setText(String.format("当前屏幕亮度: %.1f %%", GlobalStatus.brightness * 100));

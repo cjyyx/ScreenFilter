@@ -11,17 +11,11 @@ public class QuickSettingScreenShot extends TileService {
     public void onClick() {
         GlobalStatus.setTempControlMode(true);
         GlobalStatus.closeFilter();
-        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                GlobalStatus.triggerScreenCap();
-                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        GlobalStatus.setTempControlMode(false);
-                    }
-                }, 800);
-            }
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            GlobalStatus.triggerScreenCap();
+            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                GlobalStatus.setTempControlMode(false);
+            }, 800);
         }, 400);
     }
 }

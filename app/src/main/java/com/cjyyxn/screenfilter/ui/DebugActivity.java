@@ -1,7 +1,6 @@
 package com.cjyyxn.screenfilter.ui;
 
-import androidx.appcompat.app.AppCompatActivity;
-
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -12,6 +11,8 @@ import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.cjyyxn.screenfilter.GlobalStatus;
 import com.cjyyxn.screenfilter.R;
 
@@ -20,10 +21,12 @@ import java.util.TimerTask;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+@SuppressLint("DefaultLocale")
 public class DebugActivity extends AppCompatActivity {
 
-    private  TextView tv_debug_run_info;
-    private  Switch sw_debug_temp_control;
+    private TextView tv_debug_run_info;
+    @SuppressLint("UseSwitchCompatOrMaterialCode")
+    private Switch sw_debug_temp_control;
     private LinearLayout ll_list_debug_seekbar_control;
 
     @Override
@@ -40,38 +43,32 @@ public class DebugActivity extends AppCompatActivity {
     }
 
 
-    private  void setUI(){
+    private void setUI() {
         sw_debug_temp_control.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    // 当 Switch 组件的状态变为打开时执行的代码
-                    GlobalStatus.setTempControlMode(true);
-                } else {
-                    // 当 Switch 组件的状态变为关闭时执行的代码
-                    GlobalStatus.setTempControlMode(false);
-                }
+                GlobalStatus.setTempControlMode(isChecked);
             }
         });
 
         addSeekBarControl(
-                "屏幕亮度",0,100,
-                (P)->String.format("%d %%",P),
-                (P)->GlobalStatus.setBrightness(((float) P)*(1f/100f))
+                "屏幕亮度", 0, 100,
+                (P) -> String.format("%d %%", P),
+                (P) -> GlobalStatus.setBrightness(((float) P) * (1f / 100f))
         );
         addSeekBarControl(
-                "滤镜不透明度",0,100,
-                (P)->String.format("%d %%",P),
-                (P)->GlobalStatus.setFilterOpacity(((float) P)*(1f/100f))
+                "滤镜不透明度", 0, 100,
+                (P) -> String.format("%d %%", P),
+                (P) -> GlobalStatus.setFilterOpacity(((float) P) * (1f / 100f))
         );
         addSeekBarControl(
-                "硬件亮度",0,100,
-                (P)->String.format("%d %%",P),
-                (P)->GlobalStatus.setHardwareBrightness(((float) P)*(1f/100f))
+                "硬件亮度", 0, 100,
+                (P) -> String.format("%d %%", P),
+                (P) -> GlobalStatus.setHardwareBrightness(((float) P) * (1f / 100f))
         );
         addSeekBarControl(
-                "用亮度设置状态栏亮度条",0,100,
-                (P)->String.format("%d %%",P),
-                (P)->GlobalStatus.setSystemBrightnessProgressByBrightness(((float) P)*(1f/100f))
+                "用亮度设置状态栏亮度条", 0, 100,
+                (P) -> String.format("%d %%", P),
+                (P) -> GlobalStatus.setSystemBrightnessProgressByBrightness(((float) P) * (1f / 100f))
         );
     }
 
@@ -82,7 +79,7 @@ public class DebugActivity extends AppCompatActivity {
             int maxP,
             Function<Integer, String> tv_set,
             Consumer<Integer> onPChanged
-    ){
+    ) {
         LinearLayout cloneLayout = (LinearLayout) LayoutInflater.from(this)
                 .inflate(R.layout.seekbar_control, null);
 
@@ -125,19 +122,22 @@ public class DebugActivity extends AppCompatActivity {
                     tv_debug_run_info.setText("");
                     tv_debug_run_info.append("应用运行信息:");
                     tv_debug_run_info.append(String.format(
-                            "\n当前环境光照 %.1f lux",GlobalStatus.light
+                            "\n当前环境光照 %.1f lux", GlobalStatus.light
                     ));
                     tv_debug_run_info.append(String.format(
-                            "\n当前屏幕亮度(应用设置的亮度) %.1f %%",GlobalStatus.brightness*100
+                            "\n当前屏幕亮度(应用设置的亮度) %.1f %%", GlobalStatus.brightness * 100
                     ));
                     tv_debug_run_info.append(String.format(
-                            "\n当前系统亮度(状态栏亮度条) %.1f %%",GlobalStatus.systemBrightness*100
+                            "\n当前系统亮度(状态栏亮度条) %.1f %%", GlobalStatus.systemBrightness * 100
                     ));
                     tv_debug_run_info.append(String.format(
-                            "\n当前硬件亮度(由滤镜设置) %.1f %%",GlobalStatus.getHardwareBrightness()*100
+                            "\n当前硬件亮度(由滤镜设置) %.1f %%", GlobalStatus.getHardwareBrightness() * 100
                     ));
                     tv_debug_run_info.append(String.format(
-                            "\n当前滤镜不透明度 %.1f %%",GlobalStatus.getFilterOpacity()*100
+                            "\n当前滤镜不透明度 %.1f %%", GlobalStatus.getFilterOpacity() * 100
+                    ));
+                    tv_debug_run_info.append(String.format(
+                            "\n当前屏幕实际亮度(估计值) %.1f lux", GlobalStatus.brightness * 600
                     ));
 
                 });

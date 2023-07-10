@@ -16,12 +16,13 @@ import java.util.TimerTask;
 public class BrightnessManager {
 
     private final ArrayList<float[]> brightnessPointList = new ArrayList<>(); // [light,brightness]
-    Context context = null;
+    Context context;
 
     private float currentLight;
     private boolean isLightChanged;
     private float currentSystemBrightness;
     private boolean isSystemBrightnessChanged;
+    private float keepenBrightness = 0;
 
     private IntelligentBrightnessState intelligentBrightnessState;
 
@@ -146,6 +147,9 @@ public class BrightnessManager {
                     Log.d("ccjy", String.format("使用者修改系统亮度条为 %.1f %%", GlobalStatus.systemBrightness * 100));
                     isSystemBrightnessChanged = true;
                     currentSystemBrightness = GlobalStatus.systemBrightness;
+
+                    // 反馈用户调节
+                    keepenBrightness = GlobalStatus.systemBrightness;
                 }
 
                 if (Float.compare(currentLight, GlobalStatus.light) != 0) {
@@ -196,7 +200,12 @@ public class BrightnessManager {
                     // SMOOTH_LIGHT 状态下，根据光照计算亮度
                     // 光照过高，转到系统自动亮度
                     float brightness = calculateBrightnessByLight(GlobalStatus.light);
-                    GlobalStatus.setBrightness(brightness);
+
+                    // 用来稳定亮度
+                    if (Math.abs(brightness - keepenBrightness) > 0.1f) {
+                        keepenBrightness = brightness;
+                    }
+                    GlobalStatus.setBrightness(keepenBrightness);
                     if (GlobalStatus.light > GlobalStatus.getHighLightThreshold()) {
                         // 开启系统自动亮度
                         openSystemAutoBrightnessMode();
@@ -236,11 +245,10 @@ public class BrightnessManager {
 
     private void openSystemAutoBrightnessMode() {
         GlobalStatus.closeFilter();
-        // 获取系统亮度模式设置
-        ContentResolver contentResolver = context.getContentResolver();
-        int mode = 0;
         try {
-            mode = Settings.System.getInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS_MODE);
+            // 获取系统亮度模式设置
+            ContentResolver contentResolver = context.getContentResolver();
+            int mode = Settings.System.getInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS_MODE);
             if (mode != Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC) {
                 // 自动亮度未开启，开启自动亮度
                 Settings.System.putInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS_MODE, Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC);
@@ -249,15 +257,12 @@ public class BrightnessManager {
         } catch (Settings.SettingNotFoundException e) {
             Log.d("ccjy", "开启自动亮度失败");
         }
-
-        GlobalStatus.systemBrightness = GlobalStatus.systemBrightness;
     }
 
     private void closeSystemAutoBrightnessMode() {
-        ContentResolver contentResolver = context.getContentResolver();
-        int mode = 0;
         try {
-            mode = Settings.System.getInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS_MODE);
+            ContentResolver contentResolver = context.getContentResolver();
+            int mode = Settings.System.getInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS_MODE);
             if (mode == Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC) {
                 // 自动亮度已开启，关闭自动亮度
                 Settings.System.putInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS_MODE, Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL);

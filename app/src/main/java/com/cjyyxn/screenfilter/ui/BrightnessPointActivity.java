@@ -1,5 +1,6 @@
 package com.cjyyxn.screenfilter.ui;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -31,6 +32,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.stream.Collectors;
 
+@SuppressLint("DefaultLocale")
 public class BrightnessPointActivity extends AppCompatActivity {
 
     private XYPlot plot;
