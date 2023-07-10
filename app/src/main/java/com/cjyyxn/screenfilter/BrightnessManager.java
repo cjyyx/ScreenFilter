@@ -69,6 +69,10 @@ public class BrightnessManager {
     }
 
     public float calculateBrightnessByLight(float light) {
+        if(light>GlobalStatus.getHighLightThreshold()){
+            return 1f;
+        }
+
         float brightness = 0;
         sortBrightnessPointList();
         for (int i = 0; i < brightnessPointList.size() - 1; i++) {

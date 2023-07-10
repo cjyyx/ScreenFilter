@@ -17,10 +17,10 @@ public class AppConfig {
     /**
      * 亮度调节容差，与亮度调节算法有关，取值 [0,1]
      */
-    public static final float BRIGHTNESS_ADJUSTMENT_TOLERANCE =0.1f;
+    public static final float BRIGHTNESS_ADJUSTMENT_TOLERANCE =0.14828f;
 
     /**
      * 亮度调节系数，与亮度调节算法有关，取值 [0,1]
      */
-    public static final float BRIGHTNESS_ADJUSTMENT_FACTOR = 0.8f;
+    public static final float BRIGHTNESS_ADJUSTMENT_FACTOR = 0.71f;
 }
