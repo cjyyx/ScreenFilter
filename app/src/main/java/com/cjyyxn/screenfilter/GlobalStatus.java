@@ -24,12 +24,6 @@ public class GlobalStatus {
      * 当处于系统自动亮度状态时，AppAccessibilityService 也会持续赋值
      */
     public static float brightness = 0;
-    /**
-     * 系统亮度条对应的亮度, 由 AppAccessibilityService 持续监测并赋值；
-     * 用户拖动主界面的屏幕亮度条，设置的是系统亮度条
-     */
-    public static float systemBrightness = 0;
-
 
     private static AppAccessibilityService appAccessibilityService = null;
     @SuppressLint("StaticFieldLeak")
@@ -194,13 +188,13 @@ public class GlobalStatus {
 
     public static void openFilter() {
         if (isReady()) {
-                filterViewManager.open();
+            filterViewManager.open();
         }
     }
 
     public static void closeFilter() {
         if (isReady()) {
-                filterViewManager.close();
+            filterViewManager.close();
         }
     }
 
@@ -238,6 +232,52 @@ public class GlobalStatus {
         }
     }
 
+
+    /**
+     * 获取系统亮度条对应的亮度
+     */
+    public static float getSystemBrightness() {
+        if (isReady()) {
+            return appAccessibilityService.getSystemBrightness();
+        } else {
+            return 0;
+        }
+    }
+
+    /**
+     * 获取系统亮度条值
+     * 与 AppConfig.SETTING_SCREEN_BRIGHTNESS 有关
+     */
+    public static int getSystemBrightnessProgress(){
+        if(isReady()){
+            return appAccessibilityService.getSystemBrightnessProgress();
+        }else {
+            return 0;
+        }
+    }
+
+    /**
+     * 设置系统亮度条
+     * 与 AppConfig.SETTING_SCREEN_BRIGHTNESS 有关
+     */
+    public static void setSystemBrightnessProgress(int progress) {
+        if (isReady()) {
+            appAccessibilityService.setSystemBrightnessProgress(progress);
+        }
+    }
+
+    /**
+     * 通过亮度值控制状态栏系统亮度条
+     * 当屏幕滤镜打开时，状态栏系统亮度条会被滤镜的亮度值覆盖，不会改变硬件亮度
+     *
+     * @param brightness [0,1]
+     */
+    public static void setSystemBrightnessProgressByBrightness(float brightness) {
+        if (isReady()) {
+            appAccessibilityService.setSystemBrightnessProgressByBrightness(brightness);
+        }
+    }
+
     /**
      * 设置实际亮度，会自动计算滤镜不透明度和硬件亮度，并设置
      *
@@ -246,19 +286,6 @@ public class GlobalStatus {
     public static void setBrightness(float brightness) {
         if (isReady() && filterViewManager.isOpen) {
             brightnessManager.setBrightness(brightness);
-        }
-    }
-
-
-    /**
-     * 通过亮度值控制状态栏系统亮度条
-     * 当屏幕滤镜打开时，状态栏系统亮度条会被滤镜的亮度值覆盖，不会关闭硬件亮度
-     *
-     * @param brightness [0,1]
-     */
-    public static void setSystemBrightnessProgressByBrightness(float brightness) {
-        if (isReady()) {
-            appAccessibilityService.setSystemBrightnessProgressByBrightness(brightness);
         }
     }
 

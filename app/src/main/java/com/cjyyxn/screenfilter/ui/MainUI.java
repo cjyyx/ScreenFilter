@@ -12,6 +12,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.cjyyxn.screenfilter.AppConfig;
 import com.cjyyxn.screenfilter.GlobalStatus;
 import com.cjyyxn.screenfilter.MainActivity;
 import com.cjyyxn.screenfilter.R;
@@ -48,7 +49,7 @@ public class MainUI {
     private final Button bt_main_open_preparatory_view;
 
     /**
-     * 主界面用户设置屏幕亮度 0,100 -> 0,1
+     * 主界面用户设置屏幕亮度 1,128 -> 0,1
      * 应与系统状态栏亮度同步
      */
     private final SeekBar sb_main_brightness_set_by_user;
@@ -179,25 +180,26 @@ public class MainUI {
             }
         });
 
-        sb_main_brightness_set_by_user.setMin(0);
-        sb_main_brightness_set_by_user.setMax(100);
+        sb_main_brightness_set_by_user.setMin(1);
+        sb_main_brightness_set_by_user.setMax(AppConfig.SETTING_SCREEN_BRIGHTNESS);
         sb_main_brightness_set_by_user.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                float b = ((float) progress) / 100f;
-                GlobalStatus.setSystemBrightnessProgressByBrightness(b);
-
+                GlobalStatus.setSystemBrightnessProgress(progress);
+                GlobalStatus.setBrightness(GlobalStatus.getSystemBrightness());
                 tv_main_brightness_set_by_user.setText(String.format(
-                        "%d %%", progress
+                        "%.0f %%", GlobalStatus.getSystemBrightness()*100
                 ));
             }
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
+                GlobalStatus.setTempControlMode(true);
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
+                GlobalStatus.setTempControlMode(false);
             }
         });
 
@@ -235,11 +237,11 @@ public class MainUI {
                     ));
 
                     tv_main_brightness_set_by_user.setText(String.format(
-                            "%.0f %%", GlobalStatus.systemBrightness * 100
+                            "%.0f %%", GlobalStatus.getSystemBrightness() * 100
                     ));
-                    sb_main_brightness_set_by_user.setProgress((int) (
-                            GlobalStatus.systemBrightness * 100
-                    ));
+                    sb_main_brightness_set_by_user.setProgress(
+                            GlobalStatus.getSystemBrightnessProgress()
+                    );
 
                     sw_main_filter.setChecked(GlobalStatus.isFilterOpenMode());
                     sw_main_intelligent_brightness.setChecked(GlobalStatus.isIntelligentBrightnessOpenMode());
@@ -248,8 +250,7 @@ public class MainUI {
 
             }
         };
-        // 每隔 0.1秒钟执行一次任务
-        timer.schedule(task, 0, 100);
+        timer.schedule(task, 0, 200);
     }
 
 }

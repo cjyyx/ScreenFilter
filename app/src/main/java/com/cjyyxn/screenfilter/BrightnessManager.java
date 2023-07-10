@@ -31,7 +31,7 @@ public class BrightnessManager {
         intelligentBrightnessState = IntelligentBrightnessState.SMOOTH_LIGHT;
         currentLight = GlobalStatus.light;
         isLightChanged = true;
-        currentSystemBrightness = GlobalStatus.systemBrightness;
+        currentSystemBrightness = GlobalStatus.getSystemBrightness();
         isSystemBrightnessChanged = true;
 //        brightnessManageLoop();
         addTimer();
@@ -128,8 +128,7 @@ public class BrightnessManager {
         GlobalStatus.setFilterOpacity(fo);
 
         GlobalStatus.brightness = brightness;
-
-//        GlobalStatus.setSystemBrightnessProgressByBrightness(GlobalStatus.brightness);
+        GlobalStatus.setSystemBrightnessProgressByBrightness(GlobalStatus.brightness);
     }
 
     private void addTimer() {
@@ -142,14 +141,11 @@ public class BrightnessManager {
                     return;
                 }
 
-                if (Float.compare(currentSystemBrightness, GlobalStatus.systemBrightness) != 0) {
+                if (Float.compare(currentSystemBrightness, GlobalStatus.getSystemBrightness()) != 0) {
                     // 说明用户调整了状态栏的亮度条
-                    Log.d("ccjy", String.format("使用者修改系统亮度条为 %.1f %%", GlobalStatus.systemBrightness * 100));
+                    Log.d("ccjy", String.format("使用者修改系统亮度条为 %.1f %%", GlobalStatus.getSystemBrightness() * 100));
                     isSystemBrightnessChanged = true;
-                    currentSystemBrightness = GlobalStatus.systemBrightness;
-
-                    // 反馈用户调节
-                    keepenBrightness = GlobalStatus.systemBrightness;
+                    currentSystemBrightness = GlobalStatus.getSystemBrightness();
                 }
 
                 if (Float.compare(currentLight, GlobalStatus.light) != 0) {
@@ -176,7 +172,7 @@ public class BrightnessManager {
                     // brightnessManageLoop会调用setBrightness，从而修改GlobalStatus.brightness
                     brightnessManageLoop();
                 } else {
-                    GlobalStatus.brightness = GlobalStatus.systemBrightness;
+                    GlobalStatus.brightness = GlobalStatus.getSystemBrightness();
                 }
 
                 isSystemBrightnessChanged = false;
@@ -184,8 +180,7 @@ public class BrightnessManager {
             }
         };
 
-        // 每隔 0.1秒钟执行一次任务
-        timer.schedule(task, 0, 100);
+        timer.schedule(task, 0, 200);
     }
 
 
@@ -198,14 +193,32 @@ public class BrightnessManager {
             switch (intelligentBrightnessState) {
                 case SMOOTH_LIGHT:
                     // SMOOTH_LIGHT 状态下，根据光照计算亮度
-                    // 光照过高，转到系统自动亮度
-                    float brightness = calculateBrightnessByLight(GlobalStatus.light);
+                    float bset = calculateBrightnessByLight(GlobalStatus.light);
 
-                    // 用来稳定亮度
-                    if (Math.abs(brightness - keepenBrightness) > 0.1f) {
-                        keepenBrightness = brightness;
+                    if (isSystemBrightnessChanged) {
+                        // 反馈用户调节
+                        float userb = GlobalStatus.getSystemBrightness();
+                        if ((userb - bset) > AppConfig.BRIGHTNESS_ADJUSTMENT_TOLERANCE) {
+                            // 用户调节亮度过高
+                            keepenBrightness = bset + AppConfig.BRIGHTNESS_ADJUSTMENT_TOLERANCE * AppConfig.USER_ADJUSTMENT_FACTOR;
+                        } else if ((bset - userb) > AppConfig.BRIGHTNESS_ADJUSTMENT_TOLERANCE) {
+                            // 用户调节亮度过低
+                            keepenBrightness = bset - AppConfig.BRIGHTNESS_ADJUSTMENT_TOLERANCE * AppConfig.USER_ADJUSTMENT_FACTOR;
+                        } else {
+                            // 用户调节亮度处于容差之内
+                            keepenBrightness = userb;
+                        }
+                    } else {
+                        // 用来稳定亮度
+                        if (Math.abs(bset - keepenBrightness) > AppConfig.BRIGHTNESS_ADJUSTMENT_TOLERANCE) {
+                            // 环境光照变化超出容差
+                            keepenBrightness = bset;
+                        }
                     }
+
                     GlobalStatus.setBrightness(keepenBrightness);
+
+                    // 光照过高，转到系统自动亮度
                     if (GlobalStatus.light > GlobalStatus.getHighLightThreshold()) {
                         // 开启系统自动亮度
                         openSystemAutoBrightnessMode();
@@ -238,7 +251,7 @@ public class BrightnessManager {
             } else {
                 // 关闭自动亮度
                 closeSystemAutoBrightnessMode();
-                setBrightness(GlobalStatus.systemBrightness);
+                setBrightness(GlobalStatus.getSystemBrightness());
             }
         }
     }

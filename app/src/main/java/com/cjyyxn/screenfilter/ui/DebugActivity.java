@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.cjyyxn.screenfilter.AppConfig;
 import com.cjyyxn.screenfilter.GlobalStatus;
 import com.cjyyxn.screenfilter.R;
 
@@ -128,7 +129,7 @@ public class DebugActivity extends AppCompatActivity {
                             "\n当前屏幕亮度(应用设置的亮度) %.1f %%", GlobalStatus.brightness * 100
                     ));
                     tv_debug_run_info.append(String.format(
-                            "\n当前系统亮度(状态栏亮度条) %.1f %%", GlobalStatus.systemBrightness * 100
+                            "\n当前系统亮度(状态栏亮度条) %.1f %%", GlobalStatus.getSystemBrightness() * 100
                     ));
                     tv_debug_run_info.append(String.format(
                             "\n当前硬件亮度(由滤镜设置) %.1f %%", GlobalStatus.getHardwareBrightness() * 100
@@ -137,7 +138,7 @@ public class DebugActivity extends AppCompatActivity {
                             "\n当前滤镜不透明度 %.1f %%", GlobalStatus.getFilterOpacity() * 100
                     ));
                     tv_debug_run_info.append(String.format(
-                            "\n当前屏幕实际亮度(估计值) %.1f lux", GlobalStatus.brightness * 600
+                            "\n当前屏幕实际亮度(估计值) %.1f lux", GlobalStatus.brightness * AppConfig.MAX_SCREEN_LIGHT
                     ));
 
                 });
