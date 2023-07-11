@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
@@ -29,6 +30,7 @@ public class DebugActivity extends AppCompatActivity {
     @SuppressLint("UseSwitchCompatOrMaterialCode")
     private Switch sw_debug_temp_control;
     private LinearLayout ll_list_debug_seekbar_control;
+    private boolean isInBackground = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +45,17 @@ public class DebugActivity extends AppCompatActivity {
         addDebugViewTimer();
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        isInBackground = true;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        isInBackground = false;
+    }
 
     private void setUI() {
         sw_debug_temp_control.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -117,35 +130,32 @@ public class DebugActivity extends AppCompatActivity {
             @Override
             public void run() {
 
-                new Handler(Looper.getMainLooper()).post(() -> {
-                    // 在UI线程中更新UI组件
+                if (!isInBackground) {
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        // 在UI线程中更新UI组件
 
-                    tv_debug_run_info.setText("");
-                    tv_debug_run_info.append("应用运行信息:");
-                    tv_debug_run_info.append(String.format(
-                            "\n当前环境光照 %.1f lux", GlobalStatus.light
-                    ));
-                    tv_debug_run_info.append(String.format(
-                            "\n当前屏幕亮度(应用设置的亮度) %.1f %%", GlobalStatus.brightness * 100
-                    ));
-                    tv_debug_run_info.append(String.format(
-                            "\n当前系统亮度(状态栏亮度条) %.1f %%", GlobalStatus.getSystemBrightness() * 100
-                    ));
-                    tv_debug_run_info.append(String.format(
-                            "\n当前硬件亮度(由滤镜设置) %.1f %%", GlobalStatus.getHardwareBrightness() * 100
-                    ));
-                    tv_debug_run_info.append(String.format(
-                            "\n当前滤镜不透明度 %.1f %%", GlobalStatus.getFilterOpacity() * 100
-                    ));
-                    tv_debug_run_info.append(String.format(
-                            "\n当前屏幕实际亮度(估计值) %.1f lux", GlobalStatus.brightness * AppConfig.MAX_SCREEN_LIGHT
-                    ));
-
-                });
-
+//                        Log.d("ccjy", "更新 DebugActivityUI");
+                        tv_debug_run_info.setText("");
+                        tv_debug_run_info.append("应用运行信息:");
+                        tv_debug_run_info.append(String.format(
+                                "\n当前环境光照 %.2f lux, 屏幕亮度 %.2f %%",
+                                GlobalStatus.light, GlobalStatus.getBrightness() * 100
+                        ));
+                        tv_debug_run_info.append(String.format(
+                                "\n当前系统亮度条 int 值 %d, 系统亮度 %.2f %%",
+                                GlobalStatus.getSystemBrightnessProgress(), GlobalStatus.getSystemBrightness() * 100
+                        ));
+                        tv_debug_run_info.append(String.format(
+                                "\n当前滤镜亮度 %.2f %%, 滤镜不透明度 %.2f %%",
+                                GlobalStatus.getHardwareBrightness() * 100, GlobalStatus.getFilterOpacity() * 100
+                        ));
+                        tv_debug_run_info.append(String.format(
+                                "\n当前屏幕实际亮度(估计值) %.2f lux", GlobalStatus.getBrightness() * AppConfig.MAX_SCREEN_LIGHT
+                        ));
+                    });
+                }
             }
         };
-        // 每隔 0.1秒钟执行一次任务
         timer.schedule(task, 0, 100);
     }
 

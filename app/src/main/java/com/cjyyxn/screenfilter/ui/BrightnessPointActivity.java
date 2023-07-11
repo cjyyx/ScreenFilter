@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,6 +50,7 @@ public class BrightnessPointActivity extends AppCompatActivity {
     private Button bt_list_brightness_point_add;
 
     private LinearLayout ll_list_brightness_point_container;
+    private boolean isInBackground = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +69,18 @@ public class BrightnessPointActivity extends AppCompatActivity {
         initBrightnessDialog();
         addTimer();
         addBrightnessPointListView();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        isInBackground = true;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        isInBackground = false;
     }
 
     private void showPlot() {
@@ -257,13 +271,15 @@ public class BrightnessPointActivity extends AppCompatActivity {
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
-
-                new Handler(Looper.getMainLooper()).post(() -> {
-                    // 在UI线程中更新UI组件
-                    if (tv_dialog_sensor_light != null) {
-                        tv_dialog_sensor_light.setText(String.format("%.1f lux", GlobalStatus.light));
-                    }
-                });
+                if (!isInBackground) {
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        // 在UI线程中更新UI组件
+//                        Log.d("ccjy", "更新 BrightnessPointActivityUI");
+                        if (tv_dialog_sensor_light != null) {
+                            tv_dialog_sensor_light.setText(String.format("%.1f lux", GlobalStatus.light));
+                        }
+                    });
+                }
             }
         };
 

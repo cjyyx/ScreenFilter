@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.Switch;
@@ -185,11 +186,13 @@ public class MainUI {
         sb_main_brightness_set_by_user.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                GlobalStatus.setSystemBrightnessProgress(progress);
-                GlobalStatus.setBrightness(GlobalStatus.getSystemBrightness());
-                tv_main_brightness_set_by_user.setText(String.format(
-                        "%.0f %%", GlobalStatus.getSystemBrightness()*100
-                ));
+                if (fromUser) {
+                    GlobalStatus.setSystemBrightnessProgress(progress);
+                    GlobalStatus.setBrightness(GlobalStatus.getSystemBrightness());
+                    tv_main_brightness_set_by_user.setText(String.format(
+                            "%.0f %%", GlobalStatus.getSystemBrightness() * 100
+                    ));
+                }
             }
 
             @Override
@@ -211,43 +214,46 @@ public class MainUI {
             @Override
             public void run() {
 
-                new Handler(Looper.getMainLooper()).post(() -> {
-                    // 在UI线程中更新UI组件
+                if (!mainActivity.isInBackground) {
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        // 在UI线程中更新UI组件
 
-                    tv_main_light.setText(String.format("当前环境光照: %.1f lux", GlobalStatus.light));
-                    tv_main_brightness.setText(String.format("当前屏幕亮度: %.1f %%", GlobalStatus.brightness * 100));
+//                        Log.d("ccjy", "更新 mainUI");
+                        tv_main_light.setText(String.format("当前环境光照: %.1f lux", GlobalStatus.light));
+                        tv_main_brightness.setText(String.format("当前屏幕亮度: %.1f %%", GlobalStatus.getBrightness() * 100));
 
-                    tv_main_min_hardware_brightness.setText(String.format(
-                            "%.0f %%", GlobalStatus.getMinHardwareBrightness() * 100
-                    ));
-                    sb_main_min_hardware_brightness.setProgress((int) (GlobalStatus.getMinHardwareBrightness() * 100 + 0.5));
+                        tv_main_min_hardware_brightness.setText(String.format(
+                                "%.0f %%", GlobalStatus.getMinHardwareBrightness() * 100
+                        ));
+                        sb_main_min_hardware_brightness.setProgress((int) (GlobalStatus.getMinHardwareBrightness() * 100 + 0.5));
 
-                    tv_main_max_filter_opacity.setText(String.format(
-                            "%.1f %%", GlobalStatus.getMaxFilterOpacity() * 100
-                    ));
-                    sb_main_max_filter_opacity.setProgress((int) (
-                            (GlobalStatus.getMaxFilterOpacity() - 0.8f) * (100f / 0.2f) + 0.5
-                    ));
+                        tv_main_max_filter_opacity.setText(String.format(
+                                "%.1f %%", GlobalStatus.getMaxFilterOpacity() * 100
+                        ));
+                        sb_main_max_filter_opacity.setProgress((int) (
+                                (GlobalStatus.getMaxFilterOpacity() - 0.8f) * (100f / 0.2f) + 0.5
+                        ));
 
-                    tv_main_high_light_threshold.setText(String.format(
-                            "%.0f lux", GlobalStatus.getHighLightThreshold()
-                    ));
-                    sb_main_high_light_threshold.setProgress((int) (
-                            (GlobalStatus.getHighLightThreshold() - 1000f) * (50f / 5000f) + 0.5
-                    ));
+                        tv_main_high_light_threshold.setText(String.format(
+                                "%.0f lux", GlobalStatus.getHighLightThreshold()
+                        ));
+                        sb_main_high_light_threshold.setProgress((int) (
+                                (GlobalStatus.getHighLightThreshold() - 1000f) * (50f / 5000f) + 0.5
+                        ));
 
-                    tv_main_brightness_set_by_user.setText(String.format(
-                            "%.0f %%", GlobalStatus.getSystemBrightness() * 100
-                    ));
-                    sb_main_brightness_set_by_user.setProgress(
-                            GlobalStatus.getSystemBrightnessProgress()
-                    );
+                        tv_main_brightness_set_by_user.setText(String.format(
+                                "%.0f %%", GlobalStatus.getSystemBrightness() * 100
+                        ));
+                        sb_main_brightness_set_by_user.setProgress(
+                                GlobalStatus.getSystemBrightnessProgress()
+                        );
 
-                    sw_main_filter.setChecked(GlobalStatus.isFilterOpenMode());
-                    sw_main_intelligent_brightness.setChecked(GlobalStatus.isIntelligentBrightnessOpenMode());
+                        sw_main_filter.setChecked(GlobalStatus.isFilterOpenMode());
+                        sw_main_intelligent_brightness.setChecked(GlobalStatus.isIntelligentBrightnessOpenMode());
 
-                });
+                    });
 
+                }
             }
         };
         timer.schedule(task, 0, 200);

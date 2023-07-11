@@ -12,6 +12,8 @@ import com.cjyyxn.screenfilter.ui.PreparatoryActivity;
 
 public class MainActivity extends AppCompatActivity {
 
+    public boolean isInBackground = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -21,10 +23,17 @@ public class MainActivity extends AppCompatActivity {
         new MainUI(this);
     }
 
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        isInBackground = true;
+    }
+
     @Override
     public void onResume() {
         super.onResume();
-
+        isInBackground = false;
         if (!GlobalStatus.isReady()){
             Toast.makeText(this, "未设置必须的权限", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(this, PreparatoryActivity.class));

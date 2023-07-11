@@ -18,8 +18,8 @@ public class FilterViewManager {
      * 滤镜处于开启状态，为 true
      */
     public boolean isOpen;
-    private float alpha = 0;
-    private float hardwareBrightness = 0;
+    private float alpha = 0f;
+    private float hardwareBrightness = 0f;
 
     public FilterViewManager(Context c) {
         // 这里假设传入的 Context 有无障碍权限，后面的代码不对无障碍权限进行检验
@@ -44,61 +44,63 @@ public class FilterViewManager {
     }
 
     public void open() {
-        if (!isOpen) {
-            new Handler(Looper.getMainLooper()).post(() -> {
-                // 在UI线程中更新UI组件
+        new Handler(Looper.getMainLooper()).post(() -> {
+            // 在UI线程中更新UI组件
+            if (!isOpen) {
                 windowManager.addView(filterView, layoutParams);
                 isOpen = true;
-            });
-        }
+            }
+        });
     }
 
     public void close() {
-        if (isOpen) {
-            new Handler(Looper.getMainLooper()).post(() -> {
-                // 在UI线程中更新UI组件
+        new Handler(Looper.getMainLooper()).post(() -> {
+            // 在UI线程中更新UI组件
+            if (isOpen) {
                 windowManager.removeView(filterView);
                 isOpen = false;
-            });
-        }
+            }
+        });
     }
 
     public float getAlpha() {
         if (isOpen) {
             return alpha;
         } else {
-            return 0f;
+            return -1f;
         }
     }
 
     public void setAlpha(float alpha) {
-        if (isOpen) {
-            new Handler(Looper.getMainLooper()).post(() -> {
+        new Handler(Looper.getMainLooper()).post(() -> {
+            if (isOpen) {
+                float a = Math.min(1f, Math.max(0f, alpha));
                 // 在UI线程中更新UI组件
-                filterView.setAlpha(alpha);
-                this.alpha = alpha;
-            });
-        }
+                filterView.setAlpha(a);
+                this.alpha = a;
+            }
+        });
     }
 
     public float getHardwareBrightness() {
         if (isOpen) {
             return hardwareBrightness;
         } else {
-            return 0f;
+            return -1f;
         }
     }
 
     public void setHardwareBrightness(float brightness) {
-        if (isOpen) {
-            new Handler(Looper.getMainLooper()).post(() -> {
+        new Handler(Looper.getMainLooper()).post(() -> {
+            if (isOpen) {
+                float b = Math.min(1f, Math.max(0f, brightness));
                 // 在UI线程中更新UI组件
                 // layoutParams.screenBrightness 会覆盖系统亮度设置
-                layoutParams.screenBrightness = brightness;
+                layoutParams.screenBrightness = b;
                 windowManager.updateViewLayout(filterView, layoutParams);
-                hardwareBrightness = brightness;
-            });
-        }
+                hardwareBrightness = b;
+            }
+        });
     }
 
     private static class FilterView extends View {

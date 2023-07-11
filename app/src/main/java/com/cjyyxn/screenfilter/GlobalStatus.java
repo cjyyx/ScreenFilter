@@ -23,7 +23,7 @@ public class GlobalStatus {
      * 当前屏幕亮度，由 BrightnessManager 持续赋值
      * 当处于系统自动亮度状态时，AppAccessibilityService 也会持续赋值
      */
-    public static float brightness = 0;
+//    public static float brightness = 0;
 
     private static AppAccessibilityService appAccessibilityService = null;
     @SuppressLint("StaticFieldLeak")
@@ -161,16 +161,16 @@ public class GlobalStatus {
         if (brightnessManager != null) {
             brightnessManager.clearBrightnessPointList();
             float t = 1.514159f;
-            addBrightnessPoint(0, 0f/t);
-            addBrightnessPoint(10, 0.1f/t);
-            addBrightnessPoint(20, 0.2f/t);
-            addBrightnessPoint(40, 0.3f/t);
-            addBrightnessPoint(80, 0.4f/t);
-            addBrightnessPoint(160, 0.5f/t);
-            addBrightnessPoint(300, 0.6f/t);
-            addBrightnessPoint(600, 0.71f/t);
-            addBrightnessPoint(1000, 0.82f/t);
-            addBrightnessPoint(1500, 0.95f/t);
+            addBrightnessPoint(0, 0f / t);
+            addBrightnessPoint(10, 0.1f / t);
+            addBrightnessPoint(20, 0.2f / t);
+            addBrightnessPoint(40, 0.3f / t);
+            addBrightnessPoint(80, 0.4f / t);
+            addBrightnessPoint(160, 0.5f / t);
+            addBrightnessPoint(300, 0.6f / t);
+            addBrightnessPoint(600, 0.71f / t);
+            addBrightnessPoint(1000, 0.82f / t);
+            addBrightnessPoint(1500, 0.95f / t);
             addBrightnessPoint(GlobalStatus.getHighLightThreshold(), 1f);
         }
     }
@@ -206,8 +206,17 @@ public class GlobalStatus {
         return brightnessManager.calculateBrightnessByLight(light);
     }
 
+    /**
+     * 获取屏幕滤镜的不透明度
+     * 滤镜未打开，返回 -1
+     * 未初始化，返回 -2
+     */
     public static float getFilterOpacity() {
-        return filterViewManager.getAlpha();
+        if (filterViewManager != null) {
+            return filterViewManager.getAlpha();
+        } else {
+            return -2f;
+        }
     }
 
     /**
@@ -221,8 +230,17 @@ public class GlobalStatus {
         }
     }
 
+    /**
+     * 获取屏幕滤镜的亮度
+     * 滤镜未打开，返回 -1
+     * 未初始化，返回 -2
+     */
     public static float getHardwareBrightness() {
-        return filterViewManager.getHardwareBrightness();
+        if (filterViewManager != null) {
+            return filterViewManager.getHardwareBrightness();
+        } else {
+            return -2f;
+        }
     }
 
     /**
@@ -252,10 +270,10 @@ public class GlobalStatus {
      * 获取系统亮度条值
      * 与 AppConfig.SETTING_SCREEN_BRIGHTNESS 有关
      */
-    public static int getSystemBrightnessProgress(){
-        if(isReady()){
+    public static int getSystemBrightnessProgress() {
+        if (isReady()) {
             return appAccessibilityService.getSystemBrightnessProgress();
-        }else {
+        } else {
             return 0;
         }
     }
@@ -281,6 +299,19 @@ public class GlobalStatus {
             appAccessibilityService.setSystemBrightnessProgressByBrightness(brightness);
         }
     }
+
+    /**
+     * 获取当前屏幕亮度
+     */
+    public static float getBrightness() {
+        if (getFilterOpacity() >= 0) {
+            // 实际亮度 = 硬件亮度 * ( 1 - 不透明度 )^2
+            return getHardwareBrightness() * (float) Math.pow((1 - getFilterOpacity()), 2);
+        } else {
+            return getSystemBrightness();
+        }
+    }
+
 
     /**
      * 设置实际亮度，会自动计算滤镜不透明度和硬件亮度，并设置

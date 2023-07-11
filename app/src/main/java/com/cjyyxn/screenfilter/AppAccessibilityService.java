@@ -1,7 +1,6 @@
 package com.cjyyxn.screenfilter;
 
 import android.accessibilityservice.AccessibilityService;
-import android.content.ContentResolver;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -9,7 +8,6 @@ import android.hardware.SensorManager;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
-import android.widget.Toast;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -34,10 +32,9 @@ public class AppAccessibilityService extends AccessibilityService {
     public void onServiceConnected() {
         Log.d("ccjy", "无障碍服务启动！！！");
 
-        addTimer();
         addLightSensor();
-
         GlobalStatus.init(this);
+        addTimer();
     }
 
     private void addLightSensor() {
@@ -65,21 +62,13 @@ public class AppAccessibilityService extends AccessibilityService {
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
-                try {
-                    // 获取系统亮度模式设置
-                    ContentResolver contentResolver = getContentResolver();
-                    int mode = Settings.System.getInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS_MODE);
-                    if (mode == Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC) {
-                        // 系统自动亮度开启
-                        GlobalStatus.brightness = GlobalStatus.getSystemBrightness();
-                    }
-                } catch (Settings.SettingNotFoundException e) {
-                    Toast.makeText(appAccessibilityService, "获取系统亮度模式设置", Toast.LENGTH_SHORT).show();
-                    e.printStackTrace();
+                if (GlobalStatus.isFilterOpenMode() && GlobalStatus.light < GlobalStatus.getHighLightThreshold()) {
+                    // 滤镜打开模式，以及光照没有超过阈值的情况下，确保滤镜打开
+                    GlobalStatus.openFilter();
                 }
             }
         };
-        timer.schedule(task, 0, 2000);
+        timer.schedule(task, 0, 10000);
     }
 
     /**
@@ -105,9 +94,8 @@ public class AppAccessibilityService extends AccessibilityService {
      * 设置系统亮度条
      */
     public void setSystemBrightnessProgress(int progress) {
-        ContentResolver contentResolver = getContentResolver();
-        Settings.System.putInt(contentResolver,
-                Settings.System.SCREEN_BRIGHTNESS, progress);
+        int p = Math.min(AppConfig.SETTING_SCREEN_BRIGHTNESS, Math.max(1, progress));
+        Settings.System.putInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS, p);
     }
 
     /**
@@ -130,7 +118,8 @@ public class AppAccessibilityService extends AccessibilityService {
      */
     public void setSystemBrightnessProgressByBrightness(float brightness) {
 
-        int bv = (int) (brightness * AppConfig.SETTING_SCREEN_BRIGHTNESS + 0.5f);
+        float b = Math.min(1f, Math.max(0f, brightness));
+        int bv = (int) (b * AppConfig.SETTING_SCREEN_BRIGHTNESS + 0.5f);
         setSystemBrightnessProgress(bv);
 
 //        Log.d("ccjy", String.format(

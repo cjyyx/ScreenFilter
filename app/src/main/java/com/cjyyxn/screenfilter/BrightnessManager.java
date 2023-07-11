@@ -69,7 +69,7 @@ public class BrightnessManager {
     }
 
     public float calculateBrightnessByLight(float light) {
-        if(light>GlobalStatus.getHighLightThreshold()){
+        if (light > GlobalStatus.getHighLightThreshold()) {
             return 1f;
         }
 
@@ -96,7 +96,7 @@ public class BrightnessManager {
      * 当屏幕滤镜模式开时，调用屏幕滤镜设置亮度
      */
     public void setBrightness(float brightness) {
-        if (!GlobalStatus.isFilterOpenMode()) {
+        if (GlobalStatus.getFilterOpacity() < 0f) {
             return;
         }
 
@@ -111,7 +111,7 @@ public class BrightnessManager {
             fo = 0;
         } else {
             sb = GlobalStatus.getMinHardwareBrightness();
-            fo = 1f - (float) Math.sqrt((double) brightness / sb);
+            fo = 1f - (float) Math.sqrt(Math.max(0f, brightness / sb));
 
             if (fo > GlobalStatus.getMaxFilterOpacity()) {
                 fo = GlobalStatus.getMaxFilterOpacity();
@@ -130,9 +130,6 @@ public class BrightnessManager {
 
         GlobalStatus.setHardwareBrightness(sb);
         GlobalStatus.setFilterOpacity(fo);
-
-        GlobalStatus.brightness = brightness;
-        GlobalStatus.setSystemBrightnessProgressByBrightness(GlobalStatus.brightness);
     }
 
     private void addTimer() {
@@ -171,12 +168,8 @@ public class BrightnessManager {
 //                    }
 //                }
 
-                // 有一个问题，系统自动亮度下，不会修改GlobalStatus.brightness TODO
                 if (GlobalStatus.isFilterOpenMode()) {
-                    // brightnessManageLoop会调用setBrightness，从而修改GlobalStatus.brightness
                     brightnessManageLoop();
-                } else {
-                    GlobalStatus.brightness = GlobalStatus.getSystemBrightness();
                 }
 
                 isSystemBrightnessChanged = false;
@@ -199,6 +192,8 @@ public class BrightnessManager {
                     // SMOOTH_LIGHT 状态下，根据光照计算亮度
                     float bset = calculateBrightnessByLight(GlobalStatus.light);
 
+//                    Log.d("ccjy", "brightnessManageLoop: SMOOTH_LIGHT");
+
                     if (isSystemBrightnessChanged) {
                         // 反馈用户调节
                         float userb = GlobalStatus.getSystemBrightness();
@@ -214,16 +209,21 @@ public class BrightnessManager {
                         }
                     } else {
                         // 用来稳定亮度
-                        if ((bset - keepenBrightness) > AppConfig.BRIGHTNESS_ADJUSTMENT_TOLERANCE) {
-                            // 环境光照高于容差
-                            keepenBrightness = bset - AppConfig.BRIGHTNESS_ADJUSTMENT_TOLERANCE * AppConfig.BRIGHTNESS_ADJUSTMENT_FACTOR / 2f;
-                        } else if ((keepenBrightness - bset) > AppConfig.BRIGHTNESS_ADJUSTMENT_TOLERANCE) {
-                            // 环境光照低于于容差
-                            keepenBrightness = bset + AppConfig.BRIGHTNESS_ADJUSTMENT_TOLERANCE * AppConfig.BRIGHTNESS_ADJUSTMENT_FACTOR / 2f;
+//                        if ((bset - keepenBrightness) > AppConfig.BRIGHTNESS_ADJUSTMENT_TOLERANCE) {
+//                            // 环境光照高于容差
+//                            keepenBrightness = bset - AppConfig.BRIGHTNESS_ADJUSTMENT_TOLERANCE * AppConfig.BRIGHTNESS_ADJUSTMENT_FACTOR / 2f;
+//                        } else if ((keepenBrightness - bset) > AppConfig.BRIGHTNESS_ADJUSTMENT_TOLERANCE) {
+//                            // 环境光照低于于容差
+//                            keepenBrightness = bset + AppConfig.BRIGHTNESS_ADJUSTMENT_TOLERANCE * AppConfig.BRIGHTNESS_ADJUSTMENT_FACTOR / 2f;
+//                        }
+                        if (Math.abs(bset - keepenBrightness) > AppConfig.BRIGHTNESS_ADJUSTMENT_TOLERANCE) {
+                            keepenBrightness = (bset + keepenBrightness) / 2f;
                         }
                     }
 
                     GlobalStatus.setBrightness(keepenBrightness);
+                    GlobalStatus.setSystemBrightnessProgressByBrightness(GlobalStatus.getBrightness());
+                    currentSystemBrightness = GlobalStatus.getSystemBrightness();
 
                     // 光照过高，转到系统自动亮度
                     if (GlobalStatus.light > GlobalStatus.getHighLightThreshold()) {
@@ -231,12 +231,16 @@ public class BrightnessManager {
                         openSystemAutoBrightnessMode();
                         intelligentBrightnessState = IntelligentBrightnessState.HIGH_LIGHT;
                     }
+
+                    // 确保关闭系统自动亮度
+                    closeSystemAutoBrightnessMode();
                     break;
                 case HIGH_LIGHT:
                     // HIGH_LIGHT 下，系统自动亮度，当光照过低，转到 SMOOTH_LIGHT
                     if (GlobalStatus.light <= GlobalStatus.getHighLightThreshold()) {
                         // 关闭系统自动亮度
                         closeSystemAutoBrightnessMode();
+                        GlobalStatus.openFilter();
                         intelligentBrightnessState = IntelligentBrightnessState.SMOOTH_LIGHT;
                     }
                     break;
@@ -251,20 +255,25 @@ public class BrightnessManager {
         } else {
             // 智能亮度关
             // 阳光模式默认开
+            GlobalStatus.setBrightness(GlobalStatus.getSystemBrightness());
+//            GlobalStatus.setSystemBrightnessProgressByBrightness(GlobalStatus.getBrightness());
+//            currentSystemBrightness = GlobalStatus.getSystemBrightness();
 
-            if (GlobalStatus.light > GlobalStatus.getHighLightThreshold()) {
-                // 开启自动亮度
-                openSystemAutoBrightnessMode();
-            } else {
-                // 关闭自动亮度
-                closeSystemAutoBrightnessMode();
-                setBrightness(GlobalStatus.getSystemBrightness());
+            if (isLightChanged) {
+                if (GlobalStatus.light > GlobalStatus.getHighLightThreshold()) {
+                    // 开启自动亮度
+                    GlobalStatus.closeFilter();
+                    openSystemAutoBrightnessMode();
+                } else {
+                    // 关闭自动亮度
+                    closeSystemAutoBrightnessMode();
+                    GlobalStatus.openFilter();
+                }
             }
         }
     }
 
     private void openSystemAutoBrightnessMode() {
-        GlobalStatus.closeFilter();
         try {
             // 获取系统亮度模式设置
             ContentResolver contentResolver = context.getContentResolver();
@@ -291,8 +300,6 @@ public class BrightnessManager {
         } catch (Settings.SettingNotFoundException e) {
             Log.d("ccjy", "关闭自动亮度失败");
         }
-        GlobalStatus.openFilter();
-        GlobalStatus.setBrightness(calculateBrightnessByLight(GlobalStatus.light));
     }
 
     /**
