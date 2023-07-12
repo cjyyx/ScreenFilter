@@ -191,18 +191,19 @@ public class BrightnessManager {
                 case SMOOTH_LIGHT:
                     // SMOOTH_LIGHT 状态下，根据光照计算亮度
                     float bset = calculateBrightnessByLight(GlobalStatus.light);
+                    float bat = AppConfig.BRIGHTNESS_ADJUSTMENT_TOLERANCE * (0.5f + bset * bset);
 
 //                    Log.d("ccjy", "brightnessManageLoop: SMOOTH_LIGHT");
 
                     if (isSystemBrightnessChanged) {
                         // 反馈用户调节
                         float userb = GlobalStatus.getSystemBrightness();
-                        if ((userb - bset) > AppConfig.BRIGHTNESS_ADJUSTMENT_TOLERANCE) {
+                        if ((userb - bset) > bat) {
                             // 用户调节亮度过高
-                            keepenBrightness = bset + AppConfig.BRIGHTNESS_ADJUSTMENT_TOLERANCE * AppConfig.BRIGHTNESS_ADJUSTMENT_FACTOR;
-                        } else if ((bset - userb) > AppConfig.BRIGHTNESS_ADJUSTMENT_TOLERANCE) {
+                            keepenBrightness = bset + bat * AppConfig.BRIGHTNESS_ADJUSTMENT_FACTOR;
+                        } else if ((bset - userb) > bat) {
                             // 用户调节亮度过低
-                            keepenBrightness = bset - AppConfig.BRIGHTNESS_ADJUSTMENT_TOLERANCE * AppConfig.BRIGHTNESS_ADJUSTMENT_FACTOR;
+                            keepenBrightness = bset - bat * AppConfig.BRIGHTNESS_ADJUSTMENT_FACTOR;
                         } else {
                             // 用户调节亮度处于容差之内
                             keepenBrightness = userb;
@@ -216,9 +217,13 @@ public class BrightnessManager {
 //                            // 环境光照低于于容差
 //                            keepenBrightness = bset + AppConfig.BRIGHTNESS_ADJUSTMENT_TOLERANCE * AppConfig.BRIGHTNESS_ADJUSTMENT_FACTOR / 2f;
 //                        }
-                        if (Math.abs(bset - keepenBrightness) > AppConfig.BRIGHTNESS_ADJUSTMENT_TOLERANCE) {
+                        if (Math.abs(bset - keepenBrightness) > bat) {
                             keepenBrightness = (bset + keepenBrightness) / 2f;
                         }
+                    }
+
+                    if (GlobalStatus.light < AppConfig.LOW_LIGHT_THRESHOLD && GlobalStatus.getSystemBrightnessProgress() <= 1) {
+                        keepenBrightness = 0f;
                     }
 
                     GlobalStatus.setBrightness(keepenBrightness);
