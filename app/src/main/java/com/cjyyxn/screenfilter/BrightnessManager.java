@@ -197,7 +197,7 @@ public class BrightnessManager {
 
                     if (isSystemBrightnessChanged) {
                         // 反馈用户调节
-                        float userb = GlobalStatus.getSystemBrightness();
+                        float userb = currentSystemBrightness;
                         if ((userb - bset) > bat) {
                             // 用户调节亮度过高
                             keepenBrightness = bset + bat * AppConfig.BRIGHTNESS_ADJUSTMENT_FACTOR;
@@ -222,13 +222,13 @@ public class BrightnessManager {
                         }
                     }
 
-                    if (GlobalStatus.light < AppConfig.LOW_LIGHT_THRESHOLD && GlobalStatus.getSystemBrightnessProgress() <= 1) {
+                    if ((GlobalStatus.light < AppConfig.LOW_LIGHT_THRESHOLD) && (GlobalStatus.getSystemBrightnessProgress() <= 1)) {
                         keepenBrightness = 0f;
                     }
 
                     GlobalStatus.setBrightness(keepenBrightness);
-                    GlobalStatus.setSystemBrightnessProgressByBrightness(GlobalStatus.getBrightness());
-                    currentSystemBrightness = GlobalStatus.getSystemBrightness();
+                    GlobalStatus.setSystemBrightnessProgressByBrightness(keepenBrightness);
+//                    currentSystemBrightness = GlobalStatus.getSystemBrightness();
 
                     // 光照过高，转到系统自动亮度
                     if (GlobalStatus.light > GlobalStatus.getHighLightThreshold()) {

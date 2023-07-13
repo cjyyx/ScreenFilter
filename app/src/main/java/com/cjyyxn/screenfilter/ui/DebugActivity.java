@@ -150,7 +150,7 @@ public class DebugActivity extends AppCompatActivity {
                                 GlobalStatus.getHardwareBrightness() * 100, GlobalStatus.getFilterOpacity() * 100
                         ));
                         tv_debug_run_info.append(String.format(
-                                "\n当前屏幕实际亮度(估计值) %.2f lux", GlobalStatus.getBrightness() * AppConfig.MAX_SCREEN_LIGHT
+                                "\n当前屏幕实际亮度(估计值) %.2f nit", GlobalStatus.getBrightness() * AppConfig.MAX_SCREEN_LIGHT
                         ));
                     });
                 }

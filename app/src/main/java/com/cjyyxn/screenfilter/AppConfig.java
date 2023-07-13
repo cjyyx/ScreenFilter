@@ -3,9 +3,9 @@ package com.cjyyxn.screenfilter;
 public class AppConfig {
 
     /**
-     * 手机屏幕的最大亮度，单位为 lux
+     * 手机屏幕的最大亮度，单位为 nit
      */
-    public static final float MAX_SCREEN_LIGHT = 600f;
+    public static final float MAX_SCREEN_LIGHT = 500f;
 
     /**
      * Settings.System.SCREEN_BRIGHTNESS 相关的值
