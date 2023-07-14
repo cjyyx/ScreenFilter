@@ -40,7 +40,6 @@ public class QuickSettingIntelligentBrightness extends TileService {
                 }
             }
         };
-        // 每隔 0.1秒钟执行一次任务
         new Timer().schedule(task, 0, 1000);
     }
 

@@ -15,7 +15,7 @@ public class QuickSettingScreenShot extends TileService {
             GlobalStatus.triggerScreenCap();
             new Handler(Looper.getMainLooper()).postDelayed(() -> {
                 GlobalStatus.setTempControlMode(false);
-            }, 800);
+            }, 1300);
         }, 400);
     }
 }

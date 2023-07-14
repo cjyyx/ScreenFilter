@@ -328,7 +328,6 @@ public class GlobalStatus {
      * 触发屏幕截图
      * 先模拟上划操作，从而上拉任务栏
      * 延时后打开系统截图服务
-     * 可能需要 500 ms
      */
     public static void triggerScreenCap() {
         if (appAccessibilityService != null) {
@@ -361,7 +360,7 @@ public class GlobalStatus {
             new Handler(Looper.getMainLooper()).postDelayed(() -> {
                 Log.d("ccjy", "开启系统截图服务");
                 appAccessibilityService.performGlobalAction(GLOBAL_ACTION_TAKE_SCREENSHOT);
-            }, 200);
+            }, 500);
         }
     }
 

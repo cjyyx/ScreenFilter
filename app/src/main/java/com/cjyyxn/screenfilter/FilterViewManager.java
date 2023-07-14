@@ -32,7 +32,7 @@ public class FilterViewManager {
 
         layoutParams.type = WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY;
         // width 和 height 尽可能大，从而覆盖屏幕
-        layoutParams.width = 1800;
+        layoutParams.width = 3200;
         layoutParams.height = 3200;
         layoutParams.format = PixelFormat.TRANSLUCENT;
         layoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE |
