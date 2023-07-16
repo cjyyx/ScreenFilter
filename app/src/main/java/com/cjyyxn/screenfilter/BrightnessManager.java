@@ -235,10 +235,10 @@ public class BrightnessManager {
                         // 开启系统自动亮度
                         openSystemAutoBrightnessMode();
                         intelligentBrightnessState = IntelligentBrightnessState.HIGH_LIGHT;
+                    } else {
+                        // 确保关闭系统自动亮度
+                        closeSystemAutoBrightnessMode();
                     }
-
-                    // 确保关闭系统自动亮度
-                    closeSystemAutoBrightnessMode();
                     break;
                 case HIGH_LIGHT:
                     // HIGH_LIGHT 下，系统自动亮度，当光照过低，转到 SMOOTH_LIGHT
