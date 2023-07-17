@@ -1,11 +1,13 @@
 package com.cjyyxn.screenfilter;
 
-import androidx.appcompat.app.AppCompatActivity;
-
+import android.app.ActivityManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.cjyyxn.screenfilter.ui.MainUI;
 import com.cjyyxn.screenfilter.ui.PreparatoryActivity;
@@ -13,6 +15,7 @@ import com.cjyyxn.screenfilter.ui.PreparatoryActivity;
 public class MainActivity extends AppCompatActivity {
 
     public boolean isInBackground = false;
+    public boolean is_hide_in_multitasking_interface = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,13 +31,28 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         isInBackground = true;
+
+        if (is_hide_in_multitasking_interface) {
+            try {
+                ActivityManager service = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+                for (ActivityManager.AppTask task : service.getAppTasks()) {
+                    if (task.getTaskInfo().taskId == getTaskId()) {
+                        task.setExcludeFromRecents(true);
+//                        Toast.makeText(this, "多任务界面隐藏成功", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+//                Toast.makeText(this, "多任务界面隐藏失败", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
         isInBackground = false;
-        if (!GlobalStatus.isReady()){
+        if (!GlobalStatus.isReady()) {
             Toast.makeText(this, "未设置必须的权限", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(this, PreparatoryActivity.class));
         }

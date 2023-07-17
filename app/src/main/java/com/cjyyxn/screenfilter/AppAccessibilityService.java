@@ -34,7 +34,7 @@ public class AppAccessibilityService extends AccessibilityService {
 
         addLightSensor();
         GlobalStatus.init(this);
-        addTimer();
+//        addTimer();
     }
 
     private void addLightSensor() {

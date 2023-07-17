@@ -155,19 +155,6 @@ public class BrightnessManager {
                     currentLight = GlobalStatus.light;
                 }
 
-//                if (intelligentBrightnessState != IntelligentBrightnessState.USER_ADJUSTMENT) {
-//
-//                } else {
-//                    KeyguardManager keyguardManager = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
-//                    if (keyguardManager.isKeyguardLocked()) {
-//                        // 设备处于锁屏状态
-//                        Log.d("cjy", "设备锁屏");
-//                        intelligentBrightnessState = IntelligentBrightnessState.SMOOTH_LIGHT;
-//                    } else {
-//                        // 设备未处于锁屏状态
-//                    }
-//                }
-
                 if (GlobalStatus.isFilterOpenMode()) {
                     brightnessManageLoop();
                 }
@@ -210,13 +197,6 @@ public class BrightnessManager {
                         }
                     } else {
                         // 用来稳定亮度
-//                        if ((bset - keepenBrightness) > AppConfig.BRIGHTNESS_ADJUSTMENT_TOLERANCE) {
-//                            // 环境光照高于容差
-//                            keepenBrightness = bset - AppConfig.BRIGHTNESS_ADJUSTMENT_TOLERANCE * AppConfig.BRIGHTNESS_ADJUSTMENT_FACTOR / 2f;
-//                        } else if ((keepenBrightness - bset) > AppConfig.BRIGHTNESS_ADJUSTMENT_TOLERANCE) {
-//                            // 环境光照低于于容差
-//                            keepenBrightness = bset + AppConfig.BRIGHTNESS_ADJUSTMENT_TOLERANCE * AppConfig.BRIGHTNESS_ADJUSTMENT_FACTOR / 2f;
-//                        }
                         if (Math.abs(bset - keepenBrightness) > bat) {
                             keepenBrightness = (bset + keepenBrightness) / 2f;
                         }
@@ -226,13 +206,13 @@ public class BrightnessManager {
                         keepenBrightness = 0f;
                     }
 
+                    GlobalStatus.openFilter();
                     GlobalStatus.setBrightness(keepenBrightness);
                     GlobalStatus.setSystemBrightnessProgressByBrightness(keepenBrightness);
-//                    currentSystemBrightness = GlobalStatus.getSystemBrightness();
 
-                    // 光照过高，转到系统自动亮度
                     if (GlobalStatus.light > GlobalStatus.getHighLightThreshold()) {
-                        // 开启系统自动亮度
+                        // 光照过高，转到系统自动亮度
+                        GlobalStatus.closeFilter();
                         openSystemAutoBrightnessMode();
                         intelligentBrightnessState = IntelligentBrightnessState.HIGH_LIGHT;
                     } else {
@@ -248,32 +228,26 @@ public class BrightnessManager {
                         GlobalStatus.openFilter();
                         intelligentBrightnessState = IntelligentBrightnessState.SMOOTH_LIGHT;
                     }
-                    break;
-                case DECREASE_LIGHT:
-                    break;
-                case INCREASE_LIGHT:
-                    break;
-                case USER_ADJUSTMENT:
+
+                    if (GlobalStatus.getSystemBrightness() < 1f) {
+                        GlobalStatus.setSystemBrightnessProgressByBrightness(1f);
+                    }
                     break;
             }
-
         } else {
             // 智能亮度关
             // 阳光模式默认开
+            GlobalStatus.openFilter();
             GlobalStatus.setBrightness(GlobalStatus.getSystemBrightness());
-//            GlobalStatus.setSystemBrightnessProgressByBrightness(GlobalStatus.getBrightness());
-//            currentSystemBrightness = GlobalStatus.getSystemBrightness();
 
-            if (isLightChanged) {
-                if (GlobalStatus.light > GlobalStatus.getHighLightThreshold()) {
-                    // 开启自动亮度
-                    GlobalStatus.closeFilter();
-                    openSystemAutoBrightnessMode();
-                } else {
-                    // 关闭自动亮度
-                    closeSystemAutoBrightnessMode();
-                    GlobalStatus.openFilter();
-                }
+            if (GlobalStatus.light > GlobalStatus.getHighLightThreshold()) {
+                // 开启自动亮度
+                GlobalStatus.closeFilter();
+                openSystemAutoBrightnessMode();
+            } else {
+                // 关闭自动亮度
+                closeSystemAutoBrightnessMode();
+                GlobalStatus.openFilter();
             }
         }
     }

@@ -191,13 +191,13 @@ public class GlobalStatus {
     }
 
     public static void openFilter() {
-        if (isReady()) {
+        if (isReady() && filterViewManager.getHardwareBrightness() < 0f) {
             filterViewManager.open();
         }
     }
 
     public static void closeFilter() {
-        if (isReady()) {
+        if (isReady() && filterViewManager.getHardwareBrightness()>=0) {
             filterViewManager.close();
         }
     }

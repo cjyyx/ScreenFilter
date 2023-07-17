@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.Switch;
@@ -57,7 +56,8 @@ public class MainUI {
     private final TextView tv_main_brightness_set_by_user;
 
     private final Button bt_main_open_debug_view;
-    private final Button bt_main_hide_in_multitasking_interface;
+    private final Switch sw_main_hide_in_multitasking_interface;
+
 
     public MainUI(MainActivity act) {
         mainActivity = act;
@@ -78,10 +78,9 @@ public class MainUI {
         sb_main_brightness_set_by_user = mainActivity.findViewById(R.id.sb_main_brightness_set_by_user);
         tv_main_brightness_set_by_user = mainActivity.findViewById(R.id.tv_main_brightness_set_by_user);
         bt_main_open_debug_view = mainActivity.findViewById(R.id.bt_main_open_debug_view);
-        bt_main_hide_in_multitasking_interface = mainActivity.findViewById(R.id.bt_main_hide_in_multitasking_interface);
+        sw_main_hide_in_multitasking_interface = mainActivity.findViewById(R.id.sw_main_hide_in_multitasking_interface);
 
         setUI();
-
         addTimer();
     }
 
@@ -97,23 +96,10 @@ public class MainUI {
 
         bt_main_open_debug_view.setOnClickListener(view -> mainActivity.startActivity(new Intent(mainActivity, DebugActivity.class)));
 
-        bt_main_hide_in_multitasking_interface.setOnClickListener(view -> {
-            try {
-                ActivityManager service = (ActivityManager) mainActivity.getSystemService(Context.ACTIVITY_SERVICE);
-                for (ActivityManager.AppTask task : service.getAppTasks()) {
-                    if (task.getTaskInfo().taskId == mainActivity.getTaskId()) {
-                        task.setExcludeFromRecents(true);
-                        Toast.makeText(mainActivity, "多任务界面隐藏成功", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                Toast.makeText(mainActivity, "多任务界面隐藏失败", Toast.LENGTH_SHORT).show();
-            }
-        });
 
         sw_main_filter.setOnCheckedChangeListener((buttonView, isChecked) -> GlobalStatus.setFilterOpenMode(isChecked));
         sw_main_intelligent_brightness.setOnCheckedChangeListener((buttonView, isChecked) -> GlobalStatus.setIntelligentBrightnessOpenMode(isChecked));
+        sw_main_hide_in_multitasking_interface.setOnCheckedChangeListener((buttonView, isChecked) -> mainActivity.is_hide_in_multitasking_interface = isChecked);
 
         sb_main_min_hardware_brightness.setMin(0);
         sb_main_min_hardware_brightness.setMax(100);
