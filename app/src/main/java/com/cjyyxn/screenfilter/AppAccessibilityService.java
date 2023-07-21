@@ -55,21 +55,21 @@ public class AppAccessibilityService extends AccessibilityService {
         sensorManager.registerListener(lightSensorListener, lightSensor, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
-    private void addTimer() {
-        AppAccessibilityService appAccessibilityService = this;
-
-        Timer timer = new Timer();
-        TimerTask task = new TimerTask() {
-            @Override
-            public void run() {
-                if (GlobalStatus.isFilterOpenMode() && GlobalStatus.light < GlobalStatus.getHighLightThreshold()) {
-                    // 滤镜打开模式，以及光照没有超过阈值的情况下，确保滤镜打开
-                    GlobalStatus.openFilter();
-                }
-            }
-        };
-        timer.schedule(task, 0, 10000);
-    }
+//    private void addTimer() {
+//        AppAccessibilityService appAccessibilityService = this;
+//
+//        Timer timer = new Timer();
+//        TimerTask task = new TimerTask() {
+//            @Override
+//            public void run() {
+//                if (GlobalStatus.isFilterOpenMode() && GlobalStatus.light < GlobalStatus.getHighLightThreshold()) {
+//                    // 滤镜打开模式，以及光照没有超过阈值的情况下，确保滤镜打开
+//                    GlobalStatus.openFilter();
+//                }
+//            }
+//        };
+//        timer.schedule(task, 0, 10000);
+//    }
 
     /**
      * 获取系统亮度条的 progress

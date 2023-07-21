@@ -40,7 +40,7 @@ public class QuickSettingIntelligentBrightness extends TileService {
                 }
             }
         };
-        new Timer().schedule(task, 0, 1000);
+        new Timer().schedule(task, 0, 2000);
     }
 
     // 点击的时候

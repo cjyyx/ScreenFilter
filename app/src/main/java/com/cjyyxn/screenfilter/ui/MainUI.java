@@ -99,7 +99,7 @@ public class MainUI {
 
         sw_main_filter.setOnCheckedChangeListener((buttonView, isChecked) -> GlobalStatus.setFilterOpenMode(isChecked));
         sw_main_intelligent_brightness.setOnCheckedChangeListener((buttonView, isChecked) -> GlobalStatus.setIntelligentBrightnessOpenMode(isChecked));
-        sw_main_hide_in_multitasking_interface.setOnCheckedChangeListener((buttonView, isChecked) -> mainActivity.is_hide_in_multitasking_interface = isChecked);
+        sw_main_hide_in_multitasking_interface.setOnCheckedChangeListener((buttonView, isChecked) -> GlobalStatus.setHideInMultitaskingInterface(isChecked));
 
         sb_main_min_hardware_brightness.setMin(0);
         sb_main_min_hardware_brightness.setMax(100);
@@ -236,7 +236,7 @@ public class MainUI {
 
                         sw_main_filter.setChecked(GlobalStatus.isFilterOpenMode());
                         sw_main_intelligent_brightness.setChecked(GlobalStatus.isIntelligentBrightnessOpenMode());
-
+                        sw_main_hide_in_multitasking_interface.setChecked(GlobalStatus.isHideInMultitaskingInterface());
                     });
 
                 }

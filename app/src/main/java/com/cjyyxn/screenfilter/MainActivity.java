@@ -15,7 +15,6 @@ import com.cjyyxn.screenfilter.ui.PreparatoryActivity;
 public class MainActivity extends AppCompatActivity {
 
     public boolean isInBackground = false;
-    public boolean is_hide_in_multitasking_interface = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
         isInBackground = true;
 
-        if (is_hide_in_multitasking_interface) {
+        if (GlobalStatus.isHideInMultitaskingInterface()) {
             try {
                 ActivityManager service = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
                 for (ActivityManager.AppTask task : service.getAppTasks()) {

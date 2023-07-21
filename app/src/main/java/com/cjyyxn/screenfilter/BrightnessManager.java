@@ -15,7 +15,7 @@ import java.util.TimerTask;
  */
 public class BrightnessManager {
 
-    private final ArrayList<float[]> brightnessPointList = new ArrayList<>(); // [light,brightness]
+    public ArrayList<float[]> brightnessPointList = new ArrayList<>(); // [light,brightness]
     Context context;
 
     private float currentLight;
