@@ -156,7 +156,7 @@ public class DebugActivity extends AppCompatActivity {
                 }
             }
         };
-        timer.schedule(task, 0, 100);
+        timer.schedule(task, 0, 200);
     }
 
 }

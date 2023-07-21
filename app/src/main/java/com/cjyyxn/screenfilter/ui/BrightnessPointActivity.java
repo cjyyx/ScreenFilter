@@ -283,8 +283,7 @@ public class BrightnessPointActivity extends AppCompatActivity {
             }
         };
 
-        // 每隔 0.1秒钟执行一次任务
-        timer.schedule(task, 0, 100);
+        timer.schedule(task, 0, 200);
     }
 
     /**
