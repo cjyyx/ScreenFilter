@@ -32,8 +32,8 @@ public class FilterViewManager {
 
         layoutParams.type = WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY;
         // width 和 height 尽可能大，从而覆盖屏幕
-        layoutParams.width = 3200;
-        layoutParams.height = 3200;
+        layoutParams.width = 4000;
+        layoutParams.height = 4000;
         layoutParams.format = PixelFormat.TRANSLUCENT;
         layoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE |
                 WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL |
@@ -44,16 +44,26 @@ public class FilterViewManager {
     }
 
     public void open() {
+        if (isOpen) {
+            return;
+        }
+
         new Handler(Looper.getMainLooper()).post(() -> {
             // 在UI线程中更新UI组件
             if (!isOpen) {
                 windowManager.addView(filterView, layoutParams);
+                setAlpha(alpha);
+                setHardwareBrightness(hardwareBrightness);
                 isOpen = true;
             }
         });
     }
 
     public void close() {
+        if (!isOpen) {
+            return;
+        }
+
         new Handler(Looper.getMainLooper()).post(() -> {
             // 在UI线程中更新UI组件
             if (isOpen) {
@@ -72,10 +82,18 @@ public class FilterViewManager {
     }
 
     public void setAlpha(float alpha) {
+        if (!isOpen) {
+            return;
+        }
+
+        if (Float.compare(this.alpha, alpha) == 0) {
+            return;
+        }
+
         new Handler(Looper.getMainLooper()).post(() -> {
+            // 在UI线程中更新UI组件
             if (isOpen) {
                 float a = Math.min(1f, Math.max(0f, alpha));
-                // 在UI线程中更新UI组件
                 filterView.setAlpha(a);
                 this.alpha = a;
             }
@@ -91,10 +109,18 @@ public class FilterViewManager {
     }
 
     public void setHardwareBrightness(float brightness) {
+        if (!isOpen) {
+            return;
+        }
+
+        if (Float.compare(this.hardwareBrightness, brightness) == 0) {
+            return;
+        }
+
         new Handler(Looper.getMainLooper()).post(() -> {
+            // 在UI线程中更新UI组件
             if (isOpen) {
                 float b = Math.min(1f, Math.max(0f, brightness));
-                // 在UI线程中更新UI组件
                 // layoutParams.screenBrightness 会覆盖系统亮度设置
                 layoutParams.screenBrightness = b;
                 windowManager.updateViewLayout(filterView, layoutParams);
