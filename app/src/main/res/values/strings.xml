@@ -1,4 +1,4 @@
 <resources>
-    <string name="app_name">屏幕滤镜(类DC)</string>
+    <string name="app_name">滤镜护眼防频闪</string>
     <string name="accessibility_description">通过辅助服务，提高滤镜显示层级，以便能够覆盖状态栏、导航栏、锁屏界面。</string>
 </resources>

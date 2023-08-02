@@ -1,10 +1,14 @@
 package com.cjyyxn.screenfilter;
 
 import android.app.ActivityManager;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -51,6 +55,48 @@ public class MainActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
         isInBackground = false;
+
+        all_judge();
+    }
+
+    public void all_judge(){
+        if (!GlobalStatus.isAgreePrivacyPolicy()) {
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+            builder.setTitle("滤镜护眼防频闪 隐私政策");
+
+            LayoutInflater inflater = getLayoutInflater();
+            View view = inflater.inflate(R.layout.dialog_privacy_policy, null);
+            builder.setView(view);
+
+            builder.setPositiveButton("同意", (dialog, which) -> {
+                GlobalStatus.setAgreePrivacyPolicy(true);
+                ready_judge();
+            });
+
+            builder.setNegativeButton("取消", (dialog, which) -> {
+                GlobalStatus.setAgreePrivacyPolicy(false);
+//                    dialog.dismiss();
+                finish();
+            });
+
+
+            AlertDialog dialog = builder.create();
+
+            dialog.setOnCancelListener(dialogInterface -> {
+                GlobalStatus.setAgreePrivacyPolicy(false);
+                finish();
+            });
+
+            dialog.show();
+        } else {
+//            Log.d("ccjy", "已同意隐私政策");
+            ready_judge();
+        }
+    }
+
+    private void ready_judge(){
         if (!GlobalStatus.isReady()) {
             Toast.makeText(this, "未设置必须的权限", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(this, PreparatoryActivity.class));

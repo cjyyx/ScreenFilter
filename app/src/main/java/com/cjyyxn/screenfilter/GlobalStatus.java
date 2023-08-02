@@ -51,6 +51,7 @@ public class GlobalStatus {
      */
     private static boolean tempControlMode = false;
     private static boolean hideInMultitaskingInterface = false;
+    private static boolean agreePrivacyPolicy = false;
 
 
     public static float getHighLightThreshold() {
@@ -150,6 +151,15 @@ public class GlobalStatus {
         syncConfig();
     }
 
+    public static boolean isAgreePrivacyPolicy() {
+        return agreePrivacyPolicy;
+    }
+
+    public static void setAgreePrivacyPolicy(boolean agreePrivacyPolicy) {
+        GlobalStatus.agreePrivacyPolicy = agreePrivacyPolicy;
+        syncConfig();
+    }
+
     public static boolean isTempControlMode() {
         return tempControlMode;
     }
@@ -169,9 +179,11 @@ public class GlobalStatus {
 
         SharedPreferences shared = appAccessibilityService.getSharedPreferences("share", Context.MODE_PRIVATE);
         if (shared.contains("filterOpenMode")) {
+            Log.d("ccjy", "loadConfig");
             loadConfig();
         } else {
             loadDefaultConfig();
+            Log.d("ccjy", "loadDefaultConfig");
         }
 
         if (isFilterOpenMode()) {
@@ -180,17 +192,16 @@ public class GlobalStatus {
     }
 
     public static void loadDefaultConfig() {
-        if (isReady()) {
-            setFilterOpenMode(true);
-            setIntelligentBrightnessOpenMode(true);
-            setSunlightPatternOpenMode(true);
-            setHideInMultitaskingInterface(false);
+        setFilterOpenMode(true);
+        setIntelligentBrightnessOpenMode(true);
+        setSunlightPatternOpenMode(true);
+        setHideInMultitaskingInterface(false);
 
-            setHighLightThreshold(4000f);
-            setMaxFilterOpacity(0.9f);
-            setMinHardwareBrightness(0.5f);
+        setHighLightThreshold(4000f);
+        setMaxFilterOpacity(0.9f);
+        setMinHardwareBrightness(0.5f);
 
-
+        if (brightnessManager != null) {
             brightnessManager.clearBrightnessPointList();
             float t = 1.514159f;
             addBrightnessPoint(0, 0f / t);
@@ -204,13 +215,12 @@ public class GlobalStatus {
             addBrightnessPoint(1000, 0.82f / t);
             addBrightnessPoint(1500, 0.95f / t);
             addBrightnessPoint(GlobalStatus.getHighLightThreshold(), 1f);
-
-            syncConfig();
         }
+        syncConfig();
     }
 
     public static void syncConfig() {
-        if (isReady()) {
+        if (isAccessibility()) {
             SharedPreferences shared = appAccessibilityService.getSharedPreferences("share", Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = shared.edit();
 
@@ -218,13 +228,16 @@ public class GlobalStatus {
             editor.putBoolean("intelligentBrightnessOpenMode", intelligentBrightnessOpenMode);
             editor.putBoolean("sunlightPatternOpenMode", sunlightPatternOpenMode);
             editor.putBoolean("hideInMultitaskingInterface", hideInMultitaskingInterface);
+            editor.putBoolean("agreePrivacyPolicy", agreePrivacyPolicy);
 
             editor.putFloat("highLightThreshold", highLightThreshold);
             editor.putFloat("maxFilterOpacity", maxFilterOpacity);
             editor.putFloat("minHardwareBrightness", minHardwareBrightness);
 
-            ArrayList<float[]> brightnessPointList = getBrightnessPointList();
-            editor.putString("brightnessPointList", new Gson().toJson(brightnessPointList));
+            if (brightnessManager != null) {
+                ArrayList<float[]> brightnessPointList = getBrightnessPointList();
+                editor.putString("brightnessPointList", new Gson().toJson(brightnessPointList));
+            }
 
             editor.apply();
         }
@@ -244,6 +257,9 @@ public class GlobalStatus {
             }
             if (shared.contains("hideInMultitaskingInterface")) {
                 hideInMultitaskingInterface = shared.getBoolean("hideInMultitaskingInterface", true);
+            }
+            if (shared.contains("agreePrivacyPolicy")) {
+                agreePrivacyPolicy = shared.getBoolean("agreePrivacyPolicy", true);
             }
 
             if (shared.contains("highLightThreshold")) {

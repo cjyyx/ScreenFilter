@@ -8,10 +8,10 @@ android {
 
     defaultConfig {
         applicationId "com.cjyyxn.screenfilter"
-        minSdk 31
+        minSdk 30
         targetSdk 33
-        versionCode 4
-        versionName "1.3"
+        versionCode 5
+        versionName "1.4"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
