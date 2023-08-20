@@ -1,8 +1,6 @@
 package com.cjyyxn.screenfilter.ui;
 
 import android.annotation.SuppressLint;
-import android.app.ActivityManager;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
@@ -88,7 +86,7 @@ public class MainUI {
         bt_main_open_brightness_point_view.setOnClickListener(view -> mainActivity.startActivity(new Intent(mainActivity, BrightnessPointActivity.class)));
 
         bt_main_load_default_config.setOnClickListener(view -> {
-            GlobalStatus.loadDefaultConfig();
+            AppConfig.loadDefaultConfig();
             Toast.makeText(mainActivity, "默认配置加载成功", Toast.LENGTH_SHORT).show();
         });
 
@@ -97,9 +95,9 @@ public class MainUI {
         bt_main_open_debug_view.setOnClickListener(view -> mainActivity.startActivity(new Intent(mainActivity, DebugActivity.class)));
 
 
-        sw_main_filter.setOnCheckedChangeListener((buttonView, isChecked) -> GlobalStatus.setFilterOpenMode(isChecked));
-        sw_main_intelligent_brightness.setOnCheckedChangeListener((buttonView, isChecked) -> GlobalStatus.setIntelligentBrightnessOpenMode(isChecked));
-        sw_main_hide_in_multitasking_interface.setOnCheckedChangeListener((buttonView, isChecked) -> GlobalStatus.setHideInMultitaskingInterface(isChecked));
+        sw_main_filter.setOnCheckedChangeListener((buttonView, isChecked) -> AppConfig.setFilterOpenMode(isChecked));
+        sw_main_intelligent_brightness.setOnCheckedChangeListener((buttonView, isChecked) -> AppConfig.setIntelligentBrightnessOpenMode(isChecked));
+        sw_main_hide_in_multitasking_interface.setOnCheckedChangeListener((buttonView, isChecked) -> AppConfig.setHideInMultitaskingInterface(isChecked));
 
         sb_main_min_hardware_brightness.setMin(0);
         sb_main_min_hardware_brightness.setMax(100);
@@ -107,10 +105,10 @@ public class MainUI {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 float brightness = ((float) progress) / 100f;
-                GlobalStatus.setMinHardwareBrightness(brightness);
+                AppConfig.setMinHardwareBrightness(brightness);
 
                 tv_main_min_hardware_brightness.setText(String.format(
-                        "%.0f %%", GlobalStatus.getMinHardwareBrightness() * 100
+                        "%.0f %%", AppConfig.getMinHardwareBrightness() * 100
                 ));
             }
 
@@ -129,10 +127,10 @@ public class MainUI {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 float mfo = 0.8f + ((float) progress) * (0.2f / 100f);
-                GlobalStatus.setMaxFilterOpacity(mfo);
+                AppConfig.setMaxFilterOpacity(mfo);
 
                 tv_main_max_filter_opacity.setText(String.format(
-                        "%.1f %%", GlobalStatus.getMaxFilterOpacity() * 100
+                        "%.1f %%", AppConfig.getMaxFilterOpacity() * 100
                 ));
             }
 
@@ -151,10 +149,10 @@ public class MainUI {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 float hlt = 1000f + ((float) progress) * (5000f / 50f);
-                GlobalStatus.setHighLightThreshold(hlt);
+                AppConfig.setHighLightThreshold(hlt);
 
                 tv_main_high_light_threshold.setText(String.format(
-                        "%.0f lux", GlobalStatus.getHighLightThreshold()
+                        "%.0f lux", AppConfig.getHighLightThreshold()
                 ));
             }
 
@@ -183,12 +181,12 @@ public class MainUI {
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-                GlobalStatus.setTempControlMode(true);
+                AppConfig.setTempControlMode(true);
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                GlobalStatus.setTempControlMode(false);
+                AppConfig.setTempControlMode(false);
             }
         });
 
@@ -209,22 +207,22 @@ public class MainUI {
                         tv_main_brightness.setText(String.format("当前屏幕亮度: %.1f %%", GlobalStatus.getBrightness() * 100));
 
                         tv_main_min_hardware_brightness.setText(String.format(
-                                "%.0f %%", GlobalStatus.getMinHardwareBrightness() * 100
+                                "%.0f %%", AppConfig.getMinHardwareBrightness() * 100
                         ));
-                        sb_main_min_hardware_brightness.setProgress((int) (GlobalStatus.getMinHardwareBrightness() * 100 + 0.5));
+                        sb_main_min_hardware_brightness.setProgress((int) (AppConfig.getMinHardwareBrightness() * 100 + 0.5));
 
                         tv_main_max_filter_opacity.setText(String.format(
-                                "%.1f %%", GlobalStatus.getMaxFilterOpacity() * 100
+                                "%.1f %%", AppConfig.getMaxFilterOpacity() * 100
                         ));
                         sb_main_max_filter_opacity.setProgress((int) (
-                                (GlobalStatus.getMaxFilterOpacity() - 0.8f) * (100f / 0.2f) + 0.5
+                                (AppConfig.getMaxFilterOpacity() - 0.8f) * (100f / 0.2f) + 0.5
                         ));
 
                         tv_main_high_light_threshold.setText(String.format(
-                                "%.0f lux", GlobalStatus.getHighLightThreshold()
+                                "%.0f lux", AppConfig.getHighLightThreshold()
                         ));
                         sb_main_high_light_threshold.setProgress((int) (
-                                (GlobalStatus.getHighLightThreshold() - 1000f) * (50f / 5000f) + 0.5
+                                (AppConfig.getHighLightThreshold() - 1000f) * (50f / 5000f) + 0.5
                         ));
 
                         tv_main_brightness_set_by_user.setText(String.format(
@@ -234,9 +232,9 @@ public class MainUI {
                                 GlobalStatus.getSystemBrightnessProgress()
                         );
 
-                        sw_main_filter.setChecked(GlobalStatus.isFilterOpenMode());
-                        sw_main_intelligent_brightness.setChecked(GlobalStatus.isIntelligentBrightnessOpenMode());
-                        sw_main_hide_in_multitasking_interface.setChecked(GlobalStatus.isHideInMultitaskingInterface());
+                        sw_main_filter.setChecked(AppConfig.isFilterOpenMode());
+                        sw_main_intelligent_brightness.setChecked(AppConfig.isIntelligentBrightnessOpenMode());
+                        sw_main_hide_in_multitasking_interface.setChecked(AppConfig.isHideInMultitaskingInterface());
                     });
 
                 }

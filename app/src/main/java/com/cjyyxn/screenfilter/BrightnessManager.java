@@ -15,7 +15,6 @@ import java.util.TimerTask;
  */
 public class BrightnessManager {
 
-    public ArrayList<float[]> brightnessPointList = new ArrayList<>(); // [light,brightness]
     Context context;
 
     private float currentLight;
@@ -37,44 +36,15 @@ public class BrightnessManager {
         addTimer();
     }
 
-    public ArrayList<float[]> getBrightnessPointList() {
-        sortBrightnessPointList();
-        return brightnessPointList;
-    }
-
-    public void addBrightnessPoint(float light, float brightness) {
-        float[] floatArray = new float[]{light, brightness};
-        brightnessPointList.add(floatArray);
-        sortBrightnessPointList();
-    }
-
-    public void delBrightnessPoint(float light, float brightness) {
-        float[] floatArray = new float[]{light, brightness};
-
-        for (int i = 0; i < brightnessPointList.size(); i++) {
-            float[] arr = brightnessPointList.get(i);
-            if (arr.length == 2 && arr[0] == floatArray[0] && arr[1] == floatArray[1]) {
-                brightnessPointList.remove(i);
-                break;
-            }
-        }
-    }
-
-    public void clearBrightnessPointList() {
-        brightnessPointList.clear();
-    }
-
-    private void sortBrightnessPointList() {
-        brightnessPointList.sort((a, b) -> Float.compare(a[0], b[0]));
-    }
-
     public float calculateBrightnessByLight(float light) {
-        if (light > GlobalStatus.getHighLightThreshold()) {
+
+        ArrayList<float[]> brightnessPointList = AppConfig.getBrightnessPointList();
+
+        if (light > AppConfig.getHighLightThreshold()) {
             return 1f;
         }
 
         float brightness = 0;
-        sortBrightnessPointList();
         for (int i = 0; i < brightnessPointList.size() - 1; i++) {
             float[] p0 = brightnessPointList.get(i);
             float[] p1 = brightnessPointList.get(i + 1);
@@ -106,15 +76,15 @@ public class BrightnessManager {
         float sb;
         float fo;
 
-        if (brightness > GlobalStatus.getMinHardwareBrightness()) {
+        if (brightness > AppConfig.getMinHardwareBrightness()) {
             sb = brightness;
             fo = 0;
         } else {
-            sb = GlobalStatus.getMinHardwareBrightness();
+            sb = AppConfig.getMinHardwareBrightness();
             fo = 1f - (float) Math.sqrt(Math.max(0f, brightness / sb));
 
-            if (fo > GlobalStatus.getMaxFilterOpacity()) {
-                fo = GlobalStatus.getMaxFilterOpacity();
+            if (fo > AppConfig.getMaxFilterOpacity()) {
+                fo = AppConfig.getMaxFilterOpacity();
             }
         }
 
@@ -122,7 +92,7 @@ public class BrightnessManager {
 //                "已知最小硬件亮度 %.1f %%, 最大滤镜不透明度 %.1f %%, 要求设置实际亮度 %.1f %%",
 //                GlobalStatus.getMinHardwareBrightness() * 100, GlobalStatus.getMaxFilterOpacity() * 100, brightness * 100
 //        ));
-//
+
 //        Log.d("ccjy", String.format(
 //                "计算得需设置硬件亮度 %.1f %%, 滤镜不透明度 %.1f %%",
 //                sb * 100, fo * 100
@@ -138,7 +108,7 @@ public class BrightnessManager {
             @Override
             public void run() {
 
-                if (GlobalStatus.isTempControlMode()) {
+                if (AppConfig.isTempControlMode()) {
                     return;
                 }
 
@@ -155,7 +125,7 @@ public class BrightnessManager {
                     currentLight = GlobalStatus.light;
                 }
 
-                if (GlobalStatus.isFilterOpenMode()) {
+                if (AppConfig.isFilterOpenMode()) {
                     brightnessManageLoop();
                 }
 
@@ -172,7 +142,7 @@ public class BrightnessManager {
      * 在屏幕滤镜开启的情况下，应该被调用
      */
     private void brightnessManageLoop() {
-        if (GlobalStatus.isIntelligentBrightnessOpenMode()) {
+        if (AppConfig.isIntelligentBrightnessOpenMode()) {
             // 智能亮度开
             switch (intelligentBrightnessState) {
                 case SMOOTH_LIGHT:
@@ -210,7 +180,7 @@ public class BrightnessManager {
                     GlobalStatus.setBrightness(keepenBrightness);
                     GlobalStatus.setSystemBrightnessProgressByBrightness(keepenBrightness);
 
-                    if (GlobalStatus.light > GlobalStatus.getHighLightThreshold()) {
+                    if (GlobalStatus.light > AppConfig.getHighLightThreshold()) {
                         // 光照过高，转到系统自动亮度
                         GlobalStatus.closeFilter();
                         openSystemAutoBrightnessMode();
@@ -222,7 +192,7 @@ public class BrightnessManager {
                     break;
                 case HIGH_LIGHT:
                     // HIGH_LIGHT 下，系统自动亮度，当光照过低，转到 SMOOTH_LIGHT
-                    if (GlobalStatus.light <= GlobalStatus.getHighLightThreshold()) {
+                    if (GlobalStatus.light <= AppConfig.getHighLightThreshold()) {
                         // 关闭系统自动亮度
                         closeSystemAutoBrightnessMode();
                         GlobalStatus.openFilter();
@@ -240,7 +210,7 @@ public class BrightnessManager {
             GlobalStatus.openFilter();
             GlobalStatus.setBrightness(GlobalStatus.getSystemBrightness());
 
-            if (GlobalStatus.light > GlobalStatus.getHighLightThreshold()) {
+            if (GlobalStatus.light > AppConfig.getHighLightThreshold()) {
                 // 开启自动亮度
                 GlobalStatus.closeFilter();
                 openSystemAutoBrightnessMode();
@@ -281,20 +251,10 @@ public class BrightnessManager {
         }
     }
 
-    /**
-     * 当开启智能亮度后，有以下状态
-     * SMOOTH_LIGHT,
-     * INCREASE_LIGHT,
-     * DECREASE_LIGHT,
-     * HIGH_LIGHT,
-     * USER_ADJUSTMENT
-     */
+
     private enum IntelligentBrightnessState {
         SMOOTH_LIGHT,
-        INCREASE_LIGHT,
-        DECREASE_LIGHT,
         HIGH_LIGHT,
-        USER_ADJUSTMENT
     }
 
 

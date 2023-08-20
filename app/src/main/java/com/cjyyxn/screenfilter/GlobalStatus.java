@@ -6,167 +6,23 @@ import static android.accessibilityservice.AccessibilityService.GLOBAL_ACTION_TA
 import android.accessibilityservice.AccessibilityService;
 import android.accessibilityservice.GestureDescription;
 import android.annotation.SuppressLint;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Path;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import java.util.ArrayList;
-
+@SuppressLint("StaticFieldLeak")
 public class GlobalStatus {
 
     /**
      * 当前环境光照，由 AppAccessibilityService 持续赋值
      */
     public static float light = 0;
-    /**
-     * 当前屏幕亮度，由 BrightnessManager 持续赋值
-     * 当处于系统自动亮度状态时，AppAccessibilityService 也会持续赋值
-     */
-//    public static float brightness = 0;
 
     private static AppAccessibilityService appAccessibilityService = null;
-    @SuppressLint("StaticFieldLeak")
     private static FilterViewManager filterViewManager = null;
-    @SuppressLint("StaticFieldLeak")
     private static BrightnessManager brightnessManager = null;
 
-    // 下面是配置相关参数
-    private static float highLightThreshold = 4000f;
-    private static float minHardwareBrightness = 1f;
-    private static float maxFilterOpacity = 0.9f;
-
-
-    private static boolean filterOpenMode = false;
-    private static boolean intelligentBrightnessOpenMode = false;
-    private static boolean sunlightPatternOpenMode = true; // 阳光模式默认开启
-    /**
-     * 临时控制模式
-     * 用户测试亮度的效果时，或屏幕截图时，为 true ,此时不会自动改变屏幕亮度
-     */
-    private static boolean tempControlMode = false;
-    private static boolean hideInMultitaskingInterface = false;
-    private static boolean agreePrivacyPolicy = false;
-
-
-    public static float getHighLightThreshold() {
-        return highLightThreshold;
-    }
-
-    public static void setHighLightThreshold(float hlt) {
-        highLightThreshold = hlt;
-        syncConfig();
-    }
-
-    public static float getMinHardwareBrightness() {
-        return minHardwareBrightness;
-    }
-
-    public static void setMinHardwareBrightness(float mhb) {
-        minHardwareBrightness = mhb;
-        syncConfig();
-    }
-
-    public static float getMaxFilterOpacity() {
-        return maxFilterOpacity;
-    }
-
-    public static void setMaxFilterOpacity(float mfo) {
-        maxFilterOpacity = mfo;
-        syncConfig();
-    }
-
-    public static ArrayList<float[]> getBrightnessPointList() {
-        if (brightnessManager != null) {
-            return brightnessManager.getBrightnessPointList();
-        } else {
-            return null;
-        }
-    }
-
-    public static void addBrightnessPoint(float light, float brightness) {
-        if (brightnessManager != null) {
-            brightnessManager.addBrightnessPoint(light, brightness);
-        }
-        syncConfig();
-    }
-
-    public static void delBrightnessPoint(float light, float brightness) {
-        if (brightnessManager != null) {
-            brightnessManager.delBrightnessPoint(light, brightness);
-        }
-        syncConfig();
-    }
-
-    public static boolean isFilterOpenMode() {
-        return filterOpenMode;
-    }
-
-    public static void setFilterOpenMode(boolean filterOpenMode) {
-        if (isReady()) {
-            GlobalStatus.filterOpenMode = filterOpenMode;
-            if (!filterOpenMode) {
-                closeFilter();
-                setIntelligentBrightnessOpenMode(false);
-            }
-        } else {
-            GlobalStatus.filterOpenMode = false;
-        }
-        syncConfig();
-    }
-
-    public static boolean isIntelligentBrightnessOpenMode() {
-        return intelligentBrightnessOpenMode;
-    }
-
-    public static void setIntelligentBrightnessOpenMode(boolean intelligentBrightnessOpenMode) {
-        if (isReady() && isFilterOpenMode()) {
-            GlobalStatus.intelligentBrightnessOpenMode = intelligentBrightnessOpenMode;
-        } else {
-            GlobalStatus.intelligentBrightnessOpenMode = false;
-        }
-        syncConfig();
-    }
-
-    public static boolean isSunlightPatternOpenMode() {
-        return sunlightPatternOpenMode;
-    }
-
-    public static void setSunlightPatternOpenMode(boolean sunlightPatternOpenMode) {
-        GlobalStatus.sunlightPatternOpenMode = sunlightPatternOpenMode;
-        syncConfig();
-    }
-
-    public static boolean isHideInMultitaskingInterface() {
-        return hideInMultitaskingInterface;
-    }
-
-    public static void setHideInMultitaskingInterface(boolean hideInMultitaskingInterface) {
-        GlobalStatus.hideInMultitaskingInterface = hideInMultitaskingInterface;
-        syncConfig();
-    }
-
-    public static boolean isAgreePrivacyPolicy() {
-        return agreePrivacyPolicy;
-    }
-
-    public static void setAgreePrivacyPolicy(boolean agreePrivacyPolicy) {
-        GlobalStatus.agreePrivacyPolicy = agreePrivacyPolicy;
-        syncConfig();
-    }
-
-    public static boolean isTempControlMode() {
-        return tempControlMode;
-    }
-
-    public static void setTempControlMode(boolean tempControlMode) {
-        GlobalStatus.tempControlMode = tempControlMode;
-    }
 
     /**
      * Global 初始化
@@ -175,112 +31,11 @@ public class GlobalStatus {
         appAccessibilityService = a;
         filterViewManager = new FilterViewManager(a);
         brightnessManager = new BrightnessManager(a);
-        setTempControlMode(false);
 
-        SharedPreferences shared = appAccessibilityService.getSharedPreferences("share", Context.MODE_PRIVATE);
-        if (shared.contains("filterOpenMode")) {
-            Log.d("ccjy", "loadConfig");
-            loadConfig();
-        } else {
-            loadDefaultConfig();
-            Log.d("ccjy", "loadDefaultConfig");
-        }
-
-        if (isFilterOpenMode()) {
+        if (AppConfig.isFilterOpenMode()) {
             openFilter();
         }
     }
-
-    public static void loadDefaultConfig() {
-        setFilterOpenMode(true);
-        setIntelligentBrightnessOpenMode(true);
-        setSunlightPatternOpenMode(true);
-        setHideInMultitaskingInterface(false);
-
-        setHighLightThreshold(4000f);
-        setMaxFilterOpacity(0.9f);
-        setMinHardwareBrightness(0.5f);
-
-        if (brightnessManager != null) {
-            brightnessManager.clearBrightnessPointList();
-            float t = 1.514159f;
-            addBrightnessPoint(0, 0f / t);
-            addBrightnessPoint(10, 0.1f / t);
-            addBrightnessPoint(20, 0.2f / t);
-            addBrightnessPoint(40, 0.3f / t);
-            addBrightnessPoint(80, 0.4f / t);
-            addBrightnessPoint(160, 0.5f / t);
-            addBrightnessPoint(300, 0.6f / t);
-            addBrightnessPoint(600, 0.71f / t);
-            addBrightnessPoint(1000, 0.82f / t);
-            addBrightnessPoint(1500, 0.95f / t);
-            addBrightnessPoint(GlobalStatus.getHighLightThreshold(), 1f);
-        }
-        syncConfig();
-    }
-
-    public static void syncConfig() {
-        if (isAccessibility()) {
-            SharedPreferences shared = appAccessibilityService.getSharedPreferences("share", Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = shared.edit();
-
-            editor.putBoolean("filterOpenMode", filterOpenMode);
-            editor.putBoolean("intelligentBrightnessOpenMode", intelligentBrightnessOpenMode);
-            editor.putBoolean("sunlightPatternOpenMode", sunlightPatternOpenMode);
-            editor.putBoolean("hideInMultitaskingInterface", hideInMultitaskingInterface);
-            editor.putBoolean("agreePrivacyPolicy", agreePrivacyPolicy);
-
-            editor.putFloat("highLightThreshold", highLightThreshold);
-            editor.putFloat("maxFilterOpacity", maxFilterOpacity);
-            editor.putFloat("minHardwareBrightness", minHardwareBrightness);
-
-            if (brightnessManager != null) {
-                ArrayList<float[]> brightnessPointList = getBrightnessPointList();
-                editor.putString("brightnessPointList", new Gson().toJson(brightnessPointList));
-            }
-
-            editor.apply();
-        }
-    }
-
-    public static void loadConfig() {
-        if (isReady()) {
-            SharedPreferences shared = appAccessibilityService.getSharedPreferences("share", Context.MODE_PRIVATE);
-            if (shared.contains("filterOpenMode")) {
-                filterOpenMode = shared.getBoolean("filterOpenMode", true);
-            }
-            if (shared.contains("intelligentBrightnessOpenMode")) {
-                intelligentBrightnessOpenMode = shared.getBoolean("intelligentBrightnessOpenMode", true);
-            }
-            if (shared.contains("sunlightPatternOpenMode")) {
-                sunlightPatternOpenMode = shared.getBoolean("sunlightPatternOpenMode", true);
-            }
-            if (shared.contains("hideInMultitaskingInterface")) {
-                hideInMultitaskingInterface = shared.getBoolean("hideInMultitaskingInterface", true);
-            }
-            if (shared.contains("agreePrivacyPolicy")) {
-                agreePrivacyPolicy = shared.getBoolean("agreePrivacyPolicy", true);
-            }
-
-            if (shared.contains("highLightThreshold")) {
-                highLightThreshold = shared.getFloat("highLightThreshold", 0f);
-            }
-            if (shared.contains("maxFilterOpacity")) {
-                maxFilterOpacity = shared.getFloat("maxFilterOpacity", 0f);
-            }
-            if (shared.contains("minHardwareBrightness")) {
-                minHardwareBrightness = shared.getFloat("minHardwareBrightness", 0f);
-            }
-
-            if (shared.contains("brightnessPointList")) {
-                brightnessManager.brightnessPointList = new Gson().fromJson(
-                        shared.getString("brightnessPointList", ""), new TypeToken<ArrayList<float[]>>() {
-                        }.getType()
-                );
-            }
-        }
-    }
-
 
     /**
      * 当无障碍服务已打开，应用所需的各权限都满足后，返回 true

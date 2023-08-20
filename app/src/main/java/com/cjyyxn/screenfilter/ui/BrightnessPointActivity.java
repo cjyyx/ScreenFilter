@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +23,7 @@ import com.androidplot.xy.SimpleXYSeries;
 import com.androidplot.xy.StepMode;
 import com.androidplot.xy.XYPlot;
 import com.androidplot.xy.XYSeries;
+import com.cjyyxn.screenfilter.AppConfig;
 import com.cjyyxn.screenfilter.GlobalStatus;
 import com.cjyyxn.screenfilter.R;
 
@@ -86,7 +86,7 @@ public class BrightnessPointActivity extends AppCompatActivity {
     private void showPlot() {
 
         plot = (XYPlot) findViewById(R.id.plot);
-        plot.setDomainBoundaries(-20, GlobalStatus.getHighLightThreshold(), BoundaryMode.FIXED);
+        plot.setDomainBoundaries(-20, AppConfig.getHighLightThreshold(), BoundaryMode.FIXED);
         plot.setRangeBoundaries(0, 100, BoundaryMode.FIXED);
 
         plot.setDomainStep(StepMode.SUBDIVIDE, 11);
@@ -95,11 +95,11 @@ public class BrightnessPointActivity extends AppCompatActivity {
         // 能够移动和缩放
 //        PanZoom.attach(plot);
         PanZoom.attach(plot, PanZoom.Pan.HORIZONTAL, PanZoom.Zoom.STRETCH_HORIZONTAL);
-        plot.getOuterLimits().set(0, GlobalStatus.getHighLightThreshold(), -1, 100);
+        plot.getOuterLimits().set(0, AppConfig.getHighLightThreshold(), -1, 100);
 
         plot.getLegend().setVisible(false);
 
-        ArrayList<float[]> bpl = GlobalStatus.getBrightnessPointList();
+        ArrayList<float[]> bpl = AppConfig.getBrightnessPointList();
 
         List<Float> list1 = bpl.stream().map(arr -> arr[0]).collect(Collectors.toList());
         List<Float> list2 = bpl.stream().map(arr -> arr[1] * 100).collect(Collectors.toList());
@@ -116,7 +116,7 @@ public class BrightnessPointActivity extends AppCompatActivity {
 
     private void updatePlot() {
         plot.clear();
-        ArrayList<float[]> bpl = GlobalStatus.getBrightnessPointList();
+        ArrayList<float[]> bpl = AppConfig.getBrightnessPointList();
 
         List<Float> list1 = bpl.stream().map(arr -> arr[0]).collect(Collectors.toList());
         List<Float> list2 = bpl.stream().map(arr -> arr[1] * 100).collect(Collectors.toList());
@@ -144,7 +144,7 @@ public class BrightnessPointActivity extends AppCompatActivity {
         tv_dialog_brightness_point_brightness = dialogBrightnessView.findViewById(R.id.tv_dialog_brightness_point_brightness);
 
         // 设置光照的拖动条
-        sb_dialog_brightness_point_light.setMax(light2progress(GlobalStatus.getHighLightThreshold()));
+        sb_dialog_brightness_point_light.setMax(light2progress(AppConfig.getHighLightThreshold()));
         sb_dialog_brightness_point_light.setMin(0);
         sb_dialog_brightness_point_light.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -158,13 +158,13 @@ public class BrightnessPointActivity extends AppCompatActivity {
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
                 // 在开始拖动进度条时执行的代码
-                GlobalStatus.setTempControlMode(true);
+                AppConfig.setTempControlMode(true);
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 // 在停止拖动进度条时执行的代码
-                GlobalStatus.setTempControlMode(false);
+                AppConfig.setTempControlMode(false);
             }
         });
 
@@ -183,13 +183,13 @@ public class BrightnessPointActivity extends AppCompatActivity {
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
                 // 在开始拖动进度条时执行的代码
-                GlobalStatus.setTempControlMode(true);
+                AppConfig.setTempControlMode(true);
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 // 在停止拖动进度条时执行的代码
-                GlobalStatus.setTempControlMode(false);
+                AppConfig.setTempControlMode(false);
             }
         });
 
@@ -213,7 +213,7 @@ public class BrightnessPointActivity extends AppCompatActivity {
         builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                GlobalStatus.addBrightnessPoint(brightness_point_dialog_light, brightness_point_dialog_brightness);
+                AppConfig.addBrightnessPoint(brightness_point_dialog_light, brightness_point_dialog_brightness);
                 updateBrightnessPointListView();
                 updatePlot();
             }
@@ -250,8 +250,8 @@ public class BrightnessPointActivity extends AppCompatActivity {
         builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                GlobalStatus.delBrightnessPoint(light, brightness);
-                GlobalStatus.addBrightnessPoint(brightness_point_dialog_light, brightness_point_dialog_brightness);
+                AppConfig.delBrightnessPoint(light, brightness);
+                AppConfig.addBrightnessPoint(brightness_point_dialog_light, brightness_point_dialog_brightness);
                 updateBrightnessPointListView();
                 updatePlot();
             }
@@ -292,7 +292,7 @@ public class BrightnessPointActivity extends AppCompatActivity {
      */
     private float progress2light(int progress) {
         float p = (float) progress;
-        float H = GlobalStatus.getHighLightThreshold();
+        float H = AppConfig.getHighLightThreshold();
         float L = (float) Math.pow((Math.pow(2, p / 10000) - 1), 3) * H;
 
         return L;
@@ -304,7 +304,7 @@ public class BrightnessPointActivity extends AppCompatActivity {
      */
     private int light2progress(float light) {
         float L = light;
-        float H = GlobalStatus.getHighLightThreshold();
+        float H = AppConfig.getHighLightThreshold();
         double p = (Math.log(Math.pow(L / H, 1.f / 3.f) + 1) / Math.log(2)) * 10000;
         return (int) p;
     }
@@ -312,7 +312,7 @@ public class BrightnessPointActivity extends AppCompatActivity {
     private void addBrightnessPointListView() {
         ll_list_brightness_point_container = findViewById(R.id.ll_list_brightness_point_container);
 
-        ArrayList<float[]> bpl = GlobalStatus.getBrightnessPointList();
+        ArrayList<float[]> bpl = AppConfig.getBrightnessPointList();
 
         for (int i = 0; i < bpl.size(); i++) {
             float[] arr = bpl.get(i);
@@ -325,7 +325,7 @@ public class BrightnessPointActivity extends AppCompatActivity {
 
         ll_list_brightness_point_container.removeAllViews();
 
-        ArrayList<float[]> bpl = GlobalStatus.getBrightnessPointList();
+        ArrayList<float[]> bpl = AppConfig.getBrightnessPointList();
 
         for (int i = 0; i < bpl.size(); i++) {
             float[] arr = bpl.get(i);
@@ -336,7 +336,7 @@ public class BrightnessPointActivity extends AppCompatActivity {
     private void addBrightnessPointView(float light, float brightness) {
         if (Float.compare(light, 0) == 0 && Float.compare(brightness, 0) == 0) {
             return;
-        } else if (Float.compare(light, GlobalStatus.getHighLightThreshold()) == 0 && Float.compare(brightness, 1f) == 0) {
+        } else if (Float.compare(light, AppConfig.getHighLightThreshold()) == 0 && Float.compare(brightness, 1f) == 0) {
             return;
         }
 
@@ -354,7 +354,7 @@ public class BrightnessPointActivity extends AppCompatActivity {
         btd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                GlobalStatus.delBrightnessPoint(light, brightness);
+                AppConfig.delBrightnessPoint(light, brightness);
                 updateBrightnessPointListView();
                 updatePlot();
             }

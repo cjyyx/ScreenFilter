@@ -3,8 +3,8 @@ package com.cjyyxn.screenfilter;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,6 +25,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        AppConfig.init(this);
+
         Log.d("ccjy", "MainActivity created");
         new MainUI(this);
     }
@@ -35,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
         isInBackground = true;
 
-        if (GlobalStatus.isHideInMultitaskingInterface()) {
+        if (AppConfig.isHideInMultitaskingInterface()) {
             try {
                 ActivityManager service = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
                 for (ActivityManager.AppTask task : service.getAppTasks()) {
@@ -59,11 +61,11 @@ public class MainActivity extends AppCompatActivity {
         all_judge();
     }
 
-    public void all_judge(){
-        if (!GlobalStatus.isAgreePrivacyPolicy()) {
+    public void all_judge() {
+        SharedPreferences shared = getSharedPreferences("share", Context.MODE_PRIVATE);
+        if (!shared.getBoolean("agreePrivacyPolicy", false)) {
 
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
             builder.setTitle("滤镜护眼防频闪 隐私政策");
 
             LayoutInflater inflater = getLayoutInflater();
@@ -71,32 +73,30 @@ public class MainActivity extends AppCompatActivity {
             builder.setView(view);
 
             builder.setPositiveButton("同意", (dialog, which) -> {
-                GlobalStatus.setAgreePrivacyPolicy(true);
+                SharedPreferences.Editor editor = shared.edit();
+                editor.putBoolean("agreePrivacyPolicy", true);
+                editor.apply();
                 ready_judge();
             });
 
             builder.setNegativeButton("取消", (dialog, which) -> {
-                GlobalStatus.setAgreePrivacyPolicy(false);
-//                    dialog.dismiss();
                 finish();
             });
 
 
             AlertDialog dialog = builder.create();
-
             dialog.setOnCancelListener(dialogInterface -> {
-                GlobalStatus.setAgreePrivacyPolicy(false);
                 finish();
             });
 
             dialog.show();
         } else {
-//            Log.d("ccjy", "已同意隐私政策");
+            Log.d("ccjy", "已同意隐私政策");
             ready_judge();
         }
     }
 
-    private void ready_judge(){
+    private void ready_judge() {
         if (!GlobalStatus.isReady()) {
             Toast.makeText(this, "未设置必须的权限", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(this, PreparatoryActivity.class));

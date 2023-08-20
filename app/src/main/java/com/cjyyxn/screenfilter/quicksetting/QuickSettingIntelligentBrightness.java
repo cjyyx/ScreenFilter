@@ -4,7 +4,7 @@ import android.service.quicksettings.Tile;
 import android.service.quicksettings.TileService;
 import android.widget.Toast;
 
-import com.cjyyxn.screenfilter.GlobalStatus;
+import com.cjyyxn.screenfilter.AppConfig;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -21,7 +21,7 @@ public class QuickSettingIntelligentBrightness extends TileService {
                 try {
                     int toggleState = getQsTile().getState();
 
-                    if (GlobalStatus.isIntelligentBrightnessOpenMode()) {
+                    if (AppConfig.isIntelligentBrightnessOpenMode()) {
                         // 智能亮度打开模式
                         if (toggleState == Tile.STATE_INACTIVE) {
                             // 如果磁贴为未激活状态，改成激活
@@ -51,13 +51,13 @@ public class QuickSettingIntelligentBrightness extends TileService {
 
         // 如果磁贴为激活状态 被点击 则动作为关闭智能亮度
         if (toggleState == Tile.STATE_ACTIVE) {
-            GlobalStatus.setIntelligentBrightnessOpenMode(false);
+            AppConfig.setIntelligentBrightnessOpenMode(false);
             Toast.makeText(this, "关闭智能亮度", Toast.LENGTH_SHORT).show();
             getQsTile().setState(Tile.STATE_INACTIVE);
         }
         // 如果磁贴为未激活状态 被点击 则动作为开启智能亮度
         else if (toggleState == Tile.STATE_INACTIVE) {
-            GlobalStatus.setIntelligentBrightnessOpenMode(true);
+            AppConfig.setIntelligentBrightnessOpenMode(true);
             Toast.makeText(this, "打开智能亮度", Toast.LENGTH_SHORT).show();
             getQsTile().setState(Tile.STATE_ACTIVE);
         }

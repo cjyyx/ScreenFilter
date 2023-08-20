@@ -9,9 +9,6 @@ import android.provider.Settings;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
 
 public class AppAccessibilityService extends AccessibilityService {
 
@@ -31,6 +28,8 @@ public class AppAccessibilityService extends AccessibilityService {
     @Override
     public void onServiceConnected() {
         Log.d("ccjy", "无障碍服务启动！！！");
+
+        AppConfig.init(this);
 
         addLightSensor();
         GlobalStatus.init(this);

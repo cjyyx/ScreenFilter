@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
@@ -60,7 +59,7 @@ public class DebugActivity extends AppCompatActivity {
     private void setUI() {
         sw_debug_temp_control.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                GlobalStatus.setTempControlMode(isChecked);
+                AppConfig.setTempControlMode(isChecked);
             }
         });
 
