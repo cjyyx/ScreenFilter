@@ -148,7 +148,7 @@ public class BrightnessManager {
                 case SMOOTH_LIGHT:
                     // SMOOTH_LIGHT 状态下，根据光照计算亮度
                     float bset = calculateBrightnessByLight(GlobalStatus.light);
-                    float bat = AppConfig.BRIGHTNESS_ADJUSTMENT_TOLERANCE * (0.5f + bset * bset);
+                    float bat = AppConfig.getBrightnessAdjustmentTolerance() * (0.5f + bset * bset);
 
 //                    Log.d("ccjy", "brightnessManageLoop: SMOOTH_LIGHT");
 

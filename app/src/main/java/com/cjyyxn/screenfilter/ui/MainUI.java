@@ -6,7 +6,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,30 +29,11 @@ public class MainUI {
     private final Button bt_main_open_brightness_point_view;
     private final Switch sw_main_filter;
     private final Switch sw_main_intelligent_brightness;
-    /**
-     * 最低硬件亮度 0,100 -> 0,100
-     */
-    private final SeekBar sb_main_min_hardware_brightness;
-    private final TextView tv_main_min_hardware_brightness;
-    /**
-     * 最高滤镜不透明度 0,100 -> 80,100
-     */
-    private final SeekBar sb_main_max_filter_opacity;
-    private final TextView tv_main_max_filter_opacity;
-    /**
-     * 高光照阈值 0,50 -> 1000,6000
-     */
-    private final SeekBar sb_main_high_light_threshold;
-    private final TextView tv_main_high_light_threshold;
+
+
     private final Button bt_main_load_default_config;
     private final Button bt_main_open_preparatory_view;
 
-    /**
-     * 主界面用户设置屏幕亮度 1,128 -> 0,1
-     * 应与系统状态栏亮度同步
-     */
-    private final SeekBar sb_main_brightness_set_by_user;
-    private final TextView tv_main_brightness_set_by_user;
 
     private final Button bt_main_open_debug_view;
     private final Switch sw_main_hide_in_multitasking_interface;
@@ -68,22 +48,18 @@ public class MainUI {
         tv_main_brightness = mainActivity.findViewById(R.id.tv_main_brightness);
         bt_main_open_brightness_point_view = mainActivity.findViewById(R.id.bt_main_open_brightness_point_view);
         sw_main_filter = mainActivity.findViewById(R.id.sw_main_filter);
-        sb_main_min_hardware_brightness = mainActivity.findViewById(R.id.sb_main_min_hardware_brightness);
-        tv_main_min_hardware_brightness = mainActivity.findViewById(R.id.tv_main_min_hardware_brightness);
-        sb_main_max_filter_opacity = mainActivity.findViewById(R.id.sb_main_max_filter_opacity);
-        tv_main_max_filter_opacity = mainActivity.findViewById(R.id.tv_main_max_filter_opacity);
-        sb_main_high_light_threshold = mainActivity.findViewById(R.id.sb_main_high_light_threshold);
-        tv_main_high_light_threshold = mainActivity.findViewById(R.id.tv_main_high_light_threshold);
         bt_main_load_default_config = mainActivity.findViewById(R.id.bt_main_load_default_config);
         bt_main_open_preparatory_view = mainActivity.findViewById(R.id.bt_main_open_preparatory_view);
         sw_main_intelligent_brightness = mainActivity.findViewById(R.id.sw_main_intelligent_brightness);
-        sb_main_brightness_set_by_user = mainActivity.findViewById(R.id.sb_main_brightness_set_by_user);
-        tv_main_brightness_set_by_user = mainActivity.findViewById(R.id.tv_main_brightness_set_by_user);
         bt_main_open_debug_view = mainActivity.findViewById(R.id.bt_main_open_debug_view);
         sw_main_hide_in_multitasking_interface = mainActivity.findViewById(R.id.sw_main_hide_in_multitasking_interface);
         ll0_list_main = mainActivity.findViewById(R.id.ll0_list_main);
         combinationControl = new CombinationControl(ll0_list_main, mainActivity);
 
+        /**
+         * 主界面用户设置屏幕亮度 1,128 -> 0,1
+         * 应与系统状态栏亮度同步
+         */
         combinationControl.addSeekBarControl(
                 "屏幕亮度设置", 1, AppConfig.SETTING_SCREEN_BRIGHTNESS,
                 (P) -> String.format("%.0f %%", GlobalStatus.getSystemBrightness() * 100),
@@ -96,6 +72,47 @@ public class MainUI {
                 (sb) -> AppConfig.setTempControlMode(true),
                 (sb) -> AppConfig.setTempControlMode(false),
                 (sb) -> sb.setProgress(GlobalStatus.getSystemBrightnessProgress())
+        );
+        /**
+         * 最低硬件亮度 0,100 -> 0,100
+         */
+        combinationControl.addSeekBarControl(
+                "最低硬件亮度", 0, 100,
+                (P) -> String.format("%.0f %%", AppConfig.getMinHardwareBrightness() * 100),
+                (sb, P, fromUser) -> AppConfig.setMinHardwareBrightness(((float) P) / 100f),
+                (sb) -> CombinationControl.pass(),
+                (sb) -> CombinationControl.pass(),
+                (sb) -> sb.setProgress((int) (AppConfig.getMinHardwareBrightness() * 100 + 0.5f))
+        );
+        /**
+         * 最高滤镜不透明度 60,100 -> 60,100
+         */
+        combinationControl.addSeekBarControl(
+                "最高滤镜\n不透明度", 60, 100,
+                (P) -> String.format("%.0f %%", AppConfig.getMaxFilterOpacity() * 100),
+                (sb, P, fromUser) -> AppConfig.setMaxFilterOpacity(((float) P) / 100f),
+                (sb) -> CombinationControl.pass(),
+                (sb) -> CombinationControl.pass(),
+                (sb) -> sb.setProgress((int) (AppConfig.getMaxFilterOpacity() * 100f + 0.5f))
+        );
+        /**
+         * 高光照阈值 0,50 -> 1000,6000
+         */
+        combinationControl.addSeekBarControl(
+                "阳光模式阈值", 0, 50,
+                (P) -> String.format("%.0f lux", AppConfig.getHighLightThreshold()),
+                (sb, P, fromUser) -> AppConfig.setHighLightThreshold(1000f + ((float) P) * (5000f / 50f)),
+                (sb) -> CombinationControl.pass(),
+                (sb) -> CombinationControl.pass(),
+                (sb) -> sb.setProgress((int) ((AppConfig.getHighLightThreshold() - 1000f) * (50f / 5000f) + 0.5))
+        );
+        combinationControl.addSeekBarControl(
+                "亮度调节容差", 0, 80,
+                (P) -> String.format("%.2f", AppConfig.getBrightnessAdjustmentTolerance()),
+                (sb, P, fromUser) -> AppConfig.setBrightnessAdjustmentTolerance(((float) P) / 100f),
+                (sb) -> CombinationControl.pass(),
+                (sb) -> CombinationControl.pass(),
+                (sb) -> sb.setProgress((int) (AppConfig.getBrightnessAdjustmentTolerance() * 100 + 0.5f))
         );
 
         setUI();
@@ -119,96 +136,6 @@ public class MainUI {
         sw_main_intelligent_brightness.setOnCheckedChangeListener((buttonView, isChecked) -> AppConfig.setIntelligentBrightnessOpenMode(isChecked));
         sw_main_hide_in_multitasking_interface.setOnCheckedChangeListener((buttonView, isChecked) -> AppConfig.setHideInMultitaskingInterface(isChecked));
 
-        sb_main_min_hardware_brightness.setMin(0);
-        sb_main_min_hardware_brightness.setMax(100);
-        sb_main_min_hardware_brightness.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                float brightness = ((float) progress) / 100f;
-                AppConfig.setMinHardwareBrightness(brightness);
-
-                tv_main_min_hardware_brightness.setText(String.format(
-                        "%.0f %%", AppConfig.getMinHardwareBrightness() * 100
-                ));
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-            }
-        });
-
-        sb_main_max_filter_opacity.setMin(0);
-        sb_main_max_filter_opacity.setMax(100);
-        sb_main_max_filter_opacity.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                float mfo = 0.8f + ((float) progress) * (0.2f / 100f);
-                AppConfig.setMaxFilterOpacity(mfo);
-
-                tv_main_max_filter_opacity.setText(String.format(
-                        "%.1f %%", AppConfig.getMaxFilterOpacity() * 100
-                ));
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-            }
-        });
-
-        sb_main_high_light_threshold.setMin(0);
-        sb_main_high_light_threshold.setMax(50);
-        sb_main_high_light_threshold.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                float hlt = 1000f + ((float) progress) * (5000f / 50f);
-                AppConfig.setHighLightThreshold(hlt);
-
-                tv_main_high_light_threshold.setText(String.format(
-                        "%.0f lux", AppConfig.getHighLightThreshold()
-                ));
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-            }
-        });
-
-        sb_main_brightness_set_by_user.setMin(1);
-        sb_main_brightness_set_by_user.setMax(AppConfig.SETTING_SCREEN_BRIGHTNESS);
-        sb_main_brightness_set_by_user.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (fromUser) {
-                    GlobalStatus.setSystemBrightnessProgress(progress);
-                    GlobalStatus.setBrightness(GlobalStatus.getSystemBrightness());
-                    tv_main_brightness_set_by_user.setText(String.format(
-                            "%.0f %%", GlobalStatus.getSystemBrightness() * 100
-                    ));
-                }
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                AppConfig.setTempControlMode(true);
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                AppConfig.setTempControlMode(false);
-            }
-        });
 
     }
 
@@ -226,32 +153,6 @@ public class MainUI {
 //                        Log.d("ccjy", "更新 mainUI");
                         tv_main_light.setText(String.format("当前环境光照: %.1f lux", GlobalStatus.light));
                         tv_main_brightness.setText(String.format("当前屏幕亮度: %.1f %%", GlobalStatus.getBrightness() * 100));
-
-                        tv_main_min_hardware_brightness.setText(String.format(
-                                "%.0f %%", AppConfig.getMinHardwareBrightness() * 100
-                        ));
-                        sb_main_min_hardware_brightness.setProgress((int) (AppConfig.getMinHardwareBrightness() * 100 + 0.5));
-
-                        tv_main_max_filter_opacity.setText(String.format(
-                                "%.1f %%", AppConfig.getMaxFilterOpacity() * 100
-                        ));
-                        sb_main_max_filter_opacity.setProgress((int) (
-                                (AppConfig.getMaxFilterOpacity() - 0.8f) * (100f / 0.2f) + 0.5
-                        ));
-
-                        tv_main_high_light_threshold.setText(String.format(
-                                "%.0f lux", AppConfig.getHighLightThreshold()
-                        ));
-                        sb_main_high_light_threshold.setProgress((int) (
-                                (AppConfig.getHighLightThreshold() - 1000f) * (50f / 5000f) + 0.5
-                        ));
-
-                        tv_main_brightness_set_by_user.setText(String.format(
-                                "%.0f %%", GlobalStatus.getSystemBrightness() * 100
-                        ));
-                        sb_main_brightness_set_by_user.setProgress(
-                                GlobalStatus.getSystemBrightnessProgress()
-                        );
 
                         sw_main_filter.setChecked(AppConfig.isFilterOpenMode());
                         sw_main_intelligent_brightness.setChecked(AppConfig.isIntelligentBrightnessOpenMode());

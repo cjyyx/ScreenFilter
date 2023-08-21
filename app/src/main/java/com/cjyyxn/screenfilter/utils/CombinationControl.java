@@ -27,6 +27,10 @@ public class CombinationControl {
         context = c;
     }
 
+    public static void pass() {
+
+    }
+
     public void addSeekBarControl(
             String name, int minP, int maxP,
             Function<Integer, String> tv_set,
@@ -90,6 +94,8 @@ public class CombinationControl {
             this.onStartTouch = onStartTouch;
             this.onStopTouch = onStopTouch;
             this.updateMethod = updateMethod;
+
+            // TODO layout 高度设置无效
 
             LinearLayout cloneLayout = (LinearLayout) LayoutInflater.from(context)
                     .inflate(R.layout.seekbar_control, null);

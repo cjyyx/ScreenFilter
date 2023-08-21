@@ -24,10 +24,6 @@ public class AppConfig {
      */
     public static final int SETTING_SCREEN_BRIGHTNESS = 128;
     /**
-     * 亮度调节容差，与亮度调节算法有关，取值 [0,1]
-     */
-    public static final float BRIGHTNESS_ADJUSTMENT_TOLERANCE = 0.18828f;
-    /**
      * 亮度调节系数，与亮度调节算法有关，取值 [0,1]
      */
     public static final float BRIGHTNESS_ADJUSTMENT_FACTOR = 0.71f;
@@ -41,6 +37,7 @@ public class AppConfig {
     private static final float default_highLightThreshold = 4000f;
     private static final float default_minHardwareBrightness = 0.5f;
     private static final float default_maxFilterOpacity = 0.9f;
+    private static final float default_brightnessAdjustmentTolerance = 0.3f;
     private static final boolean default_filterOpenMode = true;
     private static final boolean default_intelligentBrightnessOpenMode = false;
     private static final boolean default_hideInMultitaskingInterface = false;
@@ -54,6 +51,10 @@ public class AppConfig {
     private static float highLightThreshold;
     private static float minHardwareBrightness;
     private static float maxFilterOpacity;
+    /**
+     * 亮度调节容差，与亮度调节算法有关
+     */
+    private static float brightnessAdjustmentTolerance;
     /**
      * 列表内元素为 [light,brightness]
      */
@@ -95,6 +96,16 @@ public class AppConfig {
     public static void setMaxFilterOpacity(float mfo) {
         maxFilterOpacity = mfo;
         editor.putFloat("maxFilterOpacity", maxFilterOpacity);
+        editor.apply();
+    }
+
+    public static float getBrightnessAdjustmentTolerance() {
+        return brightnessAdjustmentTolerance;
+    }
+
+    public static void setBrightnessAdjustmentTolerance(float brightnessAdjustmentTolerance) {
+        AppConfig.brightnessAdjustmentTolerance = brightnessAdjustmentTolerance;
+        editor.putFloat("brightnessAdjustmentTolerance", brightnessAdjustmentTolerance);
         editor.apply();
     }
 
@@ -213,6 +224,7 @@ public class AppConfig {
         highLightThreshold = shared.getFloat("highLightThreshold", default_highLightThreshold);
         maxFilterOpacity = shared.getFloat("maxFilterOpacity", default_maxFilterOpacity);
         minHardwareBrightness = shared.getFloat("minHardwareBrightness", default_minHardwareBrightness);
+        brightnessAdjustmentTolerance = shared.getFloat("brightnessAdjustmentTolerance", default_brightnessAdjustmentTolerance);
 
         if (shared.contains("brightnessPointList")) {
             brightnessPointList = new Gson().fromJson(
@@ -234,6 +246,7 @@ public class AppConfig {
         setFilterOpenMode(default_filterOpenMode);
         setIntelligentBrightnessOpenMode(default_intelligentBrightnessOpenMode);
         setHideInMultitaskingInterface(default_hideInMultitaskingInterface);
+        setBrightnessAdjustmentTolerance(default_brightnessAdjustmentTolerance);
 
         setHighLightThreshold(default_highLightThreshold);
         setMaxFilterOpacity(default_maxFilterOpacity);
@@ -241,4 +254,6 @@ public class AppConfig {
 
         loadDefaultBrightnessPointList();
     }
+
+
 }
