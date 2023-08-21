@@ -265,6 +265,16 @@
                     android:text="0 lux"
                     android:textSize="12sp" />
 
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll0_list_main"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+
             </LinearLayout>
 
 <!--            <LinearLayout-->

@@ -11,7 +11,7 @@
         android:layout_width="80dp"
         android:layout_height="40dp"
         android:gravity="center"
-        android:text=""
+        android:text="name"
         android:textSize="12sp" />
 
     <View
@@ -32,7 +32,7 @@
         android:layout_width="60dp"
         android:layout_height="40dp"
         android:gravity="center"
-        android:text=""
+        android:text="xx"
         android:textSize="12sp" />
 
 </LinearLayout>

@@ -12,6 +12,7 @@ import java.util.ArrayList;
 @SuppressLint("StaticFieldLeak")
 public class AppConfig {
 
+    // 一些常数
     /**
      * 手机屏幕的最大亮度，单位为 nit
      */
@@ -34,6 +35,9 @@ public class AppConfig {
      * 低光照阈值，单位 lux
      */
     public static final float LOW_LIGHT_THRESHOLD = 5f;
+
+
+    // 默认配置
     private static final float default_highLightThreshold = 4000f;
     private static final float default_minHardwareBrightness = 0.5f;
     private static final float default_maxFilterOpacity = 0.9f;
@@ -44,12 +48,14 @@ public class AppConfig {
     private static Context context = null;
     private static SharedPreferences shared = null;
     private static SharedPreferences.Editor editor = null;
-    // 下面是配置相关参数
+
+
+    // 配置
     private static float highLightThreshold;
     private static float minHardwareBrightness;
     private static float maxFilterOpacity;
     /**
-     * [light,brightness]
+     * 列表内元素为 [light,brightness]
      */
     private static ArrayList<float[]> brightnessPointList;
     private static boolean filterOpenMode;

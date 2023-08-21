@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -14,6 +15,7 @@ import com.cjyyxn.screenfilter.AppConfig;
 import com.cjyyxn.screenfilter.GlobalStatus;
 import com.cjyyxn.screenfilter.MainActivity;
 import com.cjyyxn.screenfilter.R;
+import com.cjyyxn.screenfilter.utils.CombinationControl;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -56,6 +58,8 @@ public class MainUI {
     private final Button bt_main_open_debug_view;
     private final Switch sw_main_hide_in_multitasking_interface;
 
+    private final LinearLayout ll0_list_main;
+    private final CombinationControl combinationControl;
 
     public MainUI(MainActivity act) {
         mainActivity = act;
@@ -77,6 +81,22 @@ public class MainUI {
         tv_main_brightness_set_by_user = mainActivity.findViewById(R.id.tv_main_brightness_set_by_user);
         bt_main_open_debug_view = mainActivity.findViewById(R.id.bt_main_open_debug_view);
         sw_main_hide_in_multitasking_interface = mainActivity.findViewById(R.id.sw_main_hide_in_multitasking_interface);
+        ll0_list_main = mainActivity.findViewById(R.id.ll0_list_main);
+        combinationControl = new CombinationControl(ll0_list_main, mainActivity);
+
+        combinationControl.addSeekBarControl(
+                "屏幕亮度设置", 1, AppConfig.SETTING_SCREEN_BRIGHTNESS,
+                (P) -> String.format("%.0f %%", GlobalStatus.getSystemBrightness() * 100),
+                (sb, P, fromUser) -> {
+                    if (fromUser) {
+                        GlobalStatus.setSystemBrightnessProgress(P);
+                        GlobalStatus.setBrightness(GlobalStatus.getSystemBrightness());
+                    }
+                },
+                (sb) -> AppConfig.setTempControlMode(true),
+                (sb) -> AppConfig.setTempControlMode(false),
+                (sb) -> sb.setProgress(GlobalStatus.getSystemBrightnessProgress())
+        );
 
         setUI();
         addTimer();
@@ -199,6 +219,7 @@ public class MainUI {
             public void run() {
 
                 if (!mainActivity.isInBackground) {
+                    combinationControl.update();
                     new Handler(Looper.getMainLooper()).post(() -> {
                         // 在UI线程中更新UI组件
 
