@@ -37,7 +37,8 @@ public class AppConfig {
     private static final float default_highLightThreshold = 4000f;
     private static final float default_minHardwareBrightness = 0.5f;
     private static final float default_maxFilterOpacity = 0.9f;
-    private static final float default_brightnessAdjustmentTolerance = 0.3f;
+    private static final float default_brightnessAdjustmentIncreaseTolerance = 0.13f;
+    private static final float default_brightnessAdjustmentDecreaseTolerance = 0.46f;
     private static final boolean default_filterOpenMode = true;
     private static final boolean default_intelligentBrightnessOpenMode = false;
     private static final boolean default_hideInMultitaskingInterface = false;
@@ -45,8 +46,6 @@ public class AppConfig {
     private static Context context = null;
     private static SharedPreferences shared = null;
     private static SharedPreferences.Editor editor = null;
-
-
     // 配置
     private static float highLightThreshold;
     private static float minHardwareBrightness;
@@ -54,7 +53,8 @@ public class AppConfig {
     /**
      * 亮度调节容差，与亮度调节算法有关
      */
-    private static float brightnessAdjustmentTolerance;
+    private static float brightnessAdjustmentIncreaseTolerance;
+    private static float brightnessAdjustmentDecreaseTolerance;
     /**
      * 列表内元素为 [light,brightness]
      */
@@ -99,13 +99,22 @@ public class AppConfig {
         editor.apply();
     }
 
-    public static float getBrightnessAdjustmentTolerance() {
-        return brightnessAdjustmentTolerance;
+    public static float getBrightnessAdjustmentIncreaseTolerance() {
+        return brightnessAdjustmentIncreaseTolerance;
+    }
+    public static void setBrightnessAdjustmentIncreaseTolerance(float brightnessAdjustmentIncreaseTolerance) {
+        AppConfig.brightnessAdjustmentIncreaseTolerance = brightnessAdjustmentIncreaseTolerance;
+        editor.putFloat("brightnessAdjustmentIncreaseTolerance", brightnessAdjustmentIncreaseTolerance);
+        editor.apply();
     }
 
-    public static void setBrightnessAdjustmentTolerance(float brightnessAdjustmentTolerance) {
-        AppConfig.brightnessAdjustmentTolerance = brightnessAdjustmentTolerance;
-        editor.putFloat("brightnessAdjustmentTolerance", brightnessAdjustmentTolerance);
+    public static float getBrightnessAdjustmentDecreaseTolerance() {
+        return brightnessAdjustmentDecreaseTolerance;
+    }
+
+    public static void setBrightnessAdjustmentDecreaseTolerance(float brightnessAdjustmentDecreaseTolerance) {
+        AppConfig.brightnessAdjustmentDecreaseTolerance = brightnessAdjustmentDecreaseTolerance;
+        editor.putFloat("brightnessAdjustmentDecreaseTolerance", brightnessAdjustmentDecreaseTolerance);
         editor.apply();
     }
 
@@ -224,7 +233,8 @@ public class AppConfig {
         highLightThreshold = shared.getFloat("highLightThreshold", default_highLightThreshold);
         maxFilterOpacity = shared.getFloat("maxFilterOpacity", default_maxFilterOpacity);
         minHardwareBrightness = shared.getFloat("minHardwareBrightness", default_minHardwareBrightness);
-        brightnessAdjustmentTolerance = shared.getFloat("brightnessAdjustmentTolerance", default_brightnessAdjustmentTolerance);
+        brightnessAdjustmentIncreaseTolerance = shared.getFloat("brightnessAdjustmentIncreaseTolerance", default_brightnessAdjustmentIncreaseTolerance);
+        brightnessAdjustmentDecreaseTolerance = shared.getFloat("brightnessAdjustmentDecreaseTolerance", default_brightnessAdjustmentDecreaseTolerance);
 
         if (shared.contains("brightnessPointList")) {
             brightnessPointList = new Gson().fromJson(
@@ -246,7 +256,8 @@ public class AppConfig {
         setFilterOpenMode(default_filterOpenMode);
         setIntelligentBrightnessOpenMode(default_intelligentBrightnessOpenMode);
         setHideInMultitaskingInterface(default_hideInMultitaskingInterface);
-        setBrightnessAdjustmentTolerance(default_brightnessAdjustmentTolerance);
+        setBrightnessAdjustmentIncreaseTolerance(default_brightnessAdjustmentIncreaseTolerance);
+        setBrightnessAdjustmentDecreaseTolerance(default_brightnessAdjustmentDecreaseTolerance);
 
         setHighLightThreshold(default_highLightThreshold);
         setMaxFilterOpacity(default_maxFilterOpacity);
@@ -254,6 +265,7 @@ public class AppConfig {
 
         loadDefaultBrightnessPointList();
     }
+
 
 
 }

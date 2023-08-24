@@ -27,8 +27,6 @@ public class MainUI {
     private final TextView tv_main_light;
     private final TextView tv_main_brightness;
     private final Button bt_main_open_brightness_point_view;
-    private final Switch sw_main_filter;
-    private final Switch sw_main_intelligent_brightness;
 
 
     private final Button bt_main_load_default_config;
@@ -36,7 +34,6 @@ public class MainUI {
 
 
     private final Button bt_main_open_debug_view;
-    private final Switch sw_main_hide_in_multitasking_interface;
 
     private final LinearLayout ll0_list_main;
     private final CombinationControl combinationControl;
@@ -47,14 +44,35 @@ public class MainUI {
         tv_main_light = mainActivity.findViewById(R.id.tv_main_light);
         tv_main_brightness = mainActivity.findViewById(R.id.tv_main_brightness);
         bt_main_open_brightness_point_view = mainActivity.findViewById(R.id.bt_main_open_brightness_point_view);
-        sw_main_filter = mainActivity.findViewById(R.id.sw_main_filter);
         bt_main_load_default_config = mainActivity.findViewById(R.id.bt_main_load_default_config);
         bt_main_open_preparatory_view = mainActivity.findViewById(R.id.bt_main_open_preparatory_view);
-        sw_main_intelligent_brightness = mainActivity.findViewById(R.id.sw_main_intelligent_brightness);
         bt_main_open_debug_view = mainActivity.findViewById(R.id.bt_main_open_debug_view);
-        sw_main_hide_in_multitasking_interface = mainActivity.findViewById(R.id.sw_main_hide_in_multitasking_interface);
         ll0_list_main = mainActivity.findViewById(R.id.ll0_list_main);
         combinationControl = new CombinationControl(ll0_list_main, mainActivity);
+
+        setUI();
+        addTimer();
+    }
+
+    private void setUI() {
+
+        combinationControl.addSwitchControl(
+                "屏幕滤镜开关",
+                (buttonView, isChecked) -> AppConfig.setFilterOpenMode(isChecked),
+                (sw) -> sw.setChecked(AppConfig.isFilterOpenMode())
+        );
+        combinationControl.addSwitchControl(
+                "智能亮度开关",
+                (buttonView, isChecked) -> AppConfig.setIntelligentBrightnessOpenMode(isChecked),
+                (sw) -> sw.setChecked(AppConfig.isIntelligentBrightnessOpenMode())
+        );
+        combinationControl.addSwitchControl(
+                "在多任务界面隐藏",
+                (buttonView, isChecked) -> AppConfig.setHideInMultitaskingInterface(isChecked),
+                (sw) -> sw.setChecked(AppConfig.isHideInMultitaskingInterface())
+        );
+
+        combinationControl.addLine();
 
         /**
          * 主界面用户设置屏幕亮度 1,128 -> 0,1
@@ -107,19 +125,22 @@ public class MainUI {
                 (sb) -> sb.setProgress((int) ((AppConfig.getHighLightThreshold() - 1000f) * (50f / 5000f) + 0.5))
         );
         combinationControl.addSeekBarControl(
-                "亮度调节容差", 0, 80,
-                (P) -> String.format("%.2f", AppConfig.getBrightnessAdjustmentTolerance()),
-                (sb, P, fromUser) -> AppConfig.setBrightnessAdjustmentTolerance(((float) P) / 100f),
+                "亮度调高容差", 0, 100,
+                (P) -> String.format("%.2f", AppConfig.getBrightnessAdjustmentIncreaseTolerance()),
+                (sb, P, fromUser) -> AppConfig.setBrightnessAdjustmentIncreaseTolerance(((float) P) / 100f),
                 (sb) -> CombinationControl.pass(),
                 (sb) -> CombinationControl.pass(),
-                (sb) -> sb.setProgress((int) (AppConfig.getBrightnessAdjustmentTolerance() * 100 + 0.5f))
+                (sb) -> sb.setProgress((int) (AppConfig.getBrightnessAdjustmentIncreaseTolerance() * 100 + 0.5f))
+        );
+        combinationControl.addSeekBarControl(
+                "亮度调低容差", 0, 100,
+                (P) -> String.format("%.2f", AppConfig.getBrightnessAdjustmentDecreaseTolerance()),
+                (sb, P, fromUser) -> AppConfig.setBrightnessAdjustmentDecreaseTolerance(((float) P) / 100f),
+                (sb) -> CombinationControl.pass(),
+                (sb) -> CombinationControl.pass(),
+                (sb) -> sb.setProgress((int) (AppConfig.getBrightnessAdjustmentDecreaseTolerance() * 100 + 0.5f))
         );
 
-        setUI();
-        addTimer();
-    }
-
-    private void setUI() {
         bt_main_open_brightness_point_view.setOnClickListener(view -> mainActivity.startActivity(new Intent(mainActivity, BrightnessPointActivity.class)));
 
         bt_main_load_default_config.setOnClickListener(view -> {
@@ -130,11 +151,6 @@ public class MainUI {
         bt_main_open_preparatory_view.setOnClickListener(view -> mainActivity.startActivity(new Intent(mainActivity, PreparatoryActivity.class)));
 
         bt_main_open_debug_view.setOnClickListener(view -> mainActivity.startActivity(new Intent(mainActivity, DebugActivity.class)));
-
-
-        sw_main_filter.setOnCheckedChangeListener((buttonView, isChecked) -> AppConfig.setFilterOpenMode(isChecked));
-        sw_main_intelligent_brightness.setOnCheckedChangeListener((buttonView, isChecked) -> AppConfig.setIntelligentBrightnessOpenMode(isChecked));
-        sw_main_hide_in_multitasking_interface.setOnCheckedChangeListener((buttonView, isChecked) -> AppConfig.setHideInMultitaskingInterface(isChecked));
 
 
     }
@@ -154,9 +170,6 @@ public class MainUI {
                         tv_main_light.setText(String.format("当前环境光照: %.1f lux", GlobalStatus.light));
                         tv_main_brightness.setText(String.format("当前屏幕亮度: %.1f %%", GlobalStatus.getBrightness() * 100));
 
-                        sw_main_filter.setChecked(AppConfig.isFilterOpenMode());
-                        sw_main_intelligent_brightness.setChecked(AppConfig.isIntelligentBrightnessOpenMode());
-                        sw_main_hide_in_multitasking_interface.setChecked(AppConfig.isHideInMultitaskingInterface());
                     });
 
                 }

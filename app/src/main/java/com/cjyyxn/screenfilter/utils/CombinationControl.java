@@ -1,26 +1,34 @@
 package com.cjyyxn.screenfilter.utils;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
+import android.widget.Switch;
 import android.widget.TextView;
+
+import androidx.core.content.ContextCompat;
 
 import com.cjyyxn.screenfilter.R;
 
 import java.util.ArrayList;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-
+@SuppressLint("InflateParams")
 public class CombinationControl {
 
     private final LinearLayout linearLayout;
     private final Context context;
 
     private ArrayList<SeekBarControl> sbcList = new ArrayList<SeekBarControl>();
+    private ArrayList<SwitchControl> swcList = new ArrayList<SwitchControl>();
 
     public CombinationControl(LinearLayout ll, Context c) {
         linearLayout = ll;
@@ -50,11 +58,45 @@ public class CombinationControl {
         ));
     }
 
+    public void addSwitchControl(
+            String name,
+            BiConsumer<CompoundButton, Boolean> onCheckedChanged,
+            Consumer<Switch> updateMethod
+    ) {
+        swcList.add(new SwitchControl(
+                linearLayout, context,
+                name,
+                onCheckedChanged,
+                updateMethod
+        ));
+    }
+
+    public void addLine() {
+        View view1 = new View(context);
+        LinearLayout.LayoutParams layoutParams1 = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, 16);
+        linearLayout.addView(view1, layoutParams1);
+
+        View view2 = new View(context);
+        view2.setBackgroundColor(ContextCompat.getColor(context, android.R.color.darker_gray)); // 设置背景颜色
+        LinearLayout.LayoutParams layoutParams2 = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, 2);
+        linearLayout.addView(view2, layoutParams2);
+
+        View view3 = new View(context);
+        LinearLayout.LayoutParams layoutParams3 = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, 16);
+        linearLayout.addView(view3, layoutParams3);
+    }
+
     public void update() {
         new Handler(Looper.getMainLooper()).post(() -> {
             // 在UI线程中更新UI组件
             for (int i = 0; i < sbcList.size(); i++) {
                 sbcList.get(i).update();
+            }
+            for (int i = 0; i < swcList.size(); i++) {
+                swcList.get(i).update();
             }
         });
     }
@@ -133,6 +175,45 @@ public class CombinationControl {
         public void update() {
             updateMethod.accept(sb_control);
             tv_control_set.setText(tv_set.apply(sb_control.getProgress()));
+        }
+    }
+
+    private class SwitchControl {
+        private final LinearLayout linearLayout;
+        private final Context context;
+        private final String name;
+
+        private final BiConsumer<CompoundButton, Boolean> onCheckedChanged;
+        private final Consumer<Switch> updateMethod;
+
+        private final Switch sw_control;
+
+        public SwitchControl(
+                LinearLayout ll, Context c,
+                String name,
+                BiConsumer<CompoundButton, Boolean> onCheckedChanged,
+                Consumer<Switch> updateMethod
+        ) {
+            linearLayout = ll;
+            context = c;
+            this.name = name;
+            this.onCheckedChanged = onCheckedChanged;
+            this.updateMethod = updateMethod;
+
+            LinearLayout cloneLayout = (LinearLayout) LayoutInflater.from(context)
+                    .inflate(R.layout.switch_control, null);
+
+            sw_control = cloneLayout.findViewById(R.id.sw_control);
+
+            sw_control.setText(name);
+            sw_control.setOnCheckedChangeListener(onCheckedChanged::accept);
+
+            linearLayout.addView(cloneLayout);
+
+        }
+
+        public void update() {
+            updateMethod.accept(sw_control);
         }
     }
 }

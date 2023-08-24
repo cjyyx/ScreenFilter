@@ -65,64 +65,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="16dp" />
 
-            <Switch
-                android:id="@+id/sw_main_filter"
-                android:layout_width="300dp"
-                android:layout_height="60dp"
-                android:gravity="center_vertical"
-                android:text="屏幕滤镜开关"
-                android:textSize="18sp"
-                tools:ignore="UseSwitchCompatOrMaterialXml" />
-
-            <Switch
-                android:id="@+id/sw_main_intelligent_brightness"
-                android:layout_width="300dp"
-                android:layout_height="60dp"
-                android:gravity="center_vertical"
-                android:text="智能亮度开关"
-                android:textSize="18sp"
-                tools:ignore="UseSwitchCompatOrMaterialXml" />
-
-            <Switch
-                android:id="@+id/sw_main_hide_in_multitasking_interface"
-                android:layout_width="300dp"
-                android:layout_height="60dp"
-                android:gravity="center_vertical"
-                android:text="在多任务界面隐藏"
-                android:textSize="18sp"
-                tools:ignore="UseSwitchCompatOrMaterialXml" />
-
-<!--            <Switch-->
-<!--                android:layout_width="300dp"-->
-<!--                android:layout_height="60dp"-->
-<!--                android:gravity="center_vertical"-->
-<!--                android:text="阳光模式开关"-->
-<!--                android:textSize="18sp"-->
-<!--                tools:ignore="UseSwitchCompatOrMaterialXml" />-->
-
-<!--            <Switch-->
-<!--                android:layout_width="300dp"-->
-<!--                android:layout_height="60dp"-->
-<!--                android:gravity="center_vertical"-->
-<!--                android:text="夜间模式开关"-->
-<!--                android:textSize="18sp"-->
-<!--                tools:ignore="UseSwitchCompatOrMaterialXml" />-->
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="16dp" />
-
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@android:color/darker_gray" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="16dp" />
-
-
 
             <LinearLayout
                 android:id="@+id/ll0_list_main"

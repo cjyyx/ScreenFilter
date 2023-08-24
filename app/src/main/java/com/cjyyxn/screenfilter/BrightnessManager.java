@@ -147,32 +147,38 @@ public class BrightnessManager {
             switch (intelligentBrightnessState) {
                 case SMOOTH_LIGHT:
                     // SMOOTH_LIGHT 状态下，根据光照计算亮度
-                    float bset = calculateBrightnessByLight(GlobalStatus.light);
-                    float bat = AppConfig.getBrightnessAdjustmentTolerance() * (0.5f + bset * bset);
 
-//                    Log.d("ccjy", "brightnessManageLoop: SMOOTH_LIGHT");
+                    float bset = calculateBrightnessByLight(GlobalStatus.light);
 
                     if (isSystemBrightnessChanged) {
                         // 反馈用户调节
+
+                        // 与自动调节相反
+                        float btoler_high = bset + AppConfig.getBrightnessAdjustmentDecreaseTolerance() * (0.5f + bset * bset);
+                        float btoler_low = bset - AppConfig.getBrightnessAdjustmentIncreaseTolerance() * (0.5f + bset * bset);
                         float userb = currentSystemBrightness;
-                        if ((userb - bset) > bat) {
-                            // 用户调节亮度过高
-                            keepenBrightness = bset + bat * AppConfig.BRIGHTNESS_ADJUSTMENT_FACTOR;
-                        } else if ((bset - userb) > bat) {
+                        if (userb < btoler_low) {
                             // 用户调节亮度过低
-                            keepenBrightness = bset - bat * AppConfig.BRIGHTNESS_ADJUSTMENT_FACTOR;
+                            keepenBrightness = bset - (bset - btoler_low) * AppConfig.BRIGHTNESS_ADJUSTMENT_FACTOR;
+                        } else if (userb > btoler_high) {
+                            // 用户调节亮度过高
+                            keepenBrightness = bset + (btoler_high - bset) * AppConfig.BRIGHTNESS_ADJUSTMENT_FACTOR;
                         } else {
                             // 用户调节亮度处于容差之内
                             keepenBrightness = userb;
                         }
                     } else {
+                        float btoler_high = keepenBrightness + AppConfig.getBrightnessAdjustmentIncreaseTolerance() * (0.5f + keepenBrightness * keepenBrightness);
+                        float btoler_low = keepenBrightness - AppConfig.getBrightnessAdjustmentDecreaseTolerance() * (0.5f + keepenBrightness * keepenBrightness);
+
                         // 用来稳定亮度
-                        if (Math.abs(bset - keepenBrightness) > bat) {
-                            keepenBrightness = (bset + keepenBrightness) / 2f;
+                        if ((bset < btoler_low) || (bset > btoler_high)) {
+                            keepenBrightness = (bset + keepenBrightness) / 2;
                         }
                     }
 
                     if ((GlobalStatus.light < AppConfig.LOW_LIGHT_THRESHOLD) && (GlobalStatus.getSystemBrightnessProgress() <= 1)) {
+                        // 暗光模式
                         keepenBrightness = 0f;
                     }
 
