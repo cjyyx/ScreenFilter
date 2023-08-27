@@ -177,7 +177,7 @@ public class BrightnessManager {
                         }
                     }
 
-                    if ((GlobalStatus.light < AppConfig.LOW_LIGHT_THRESHOLD) && (GlobalStatus.getSystemBrightnessProgress() <= 1)) {
+                    if ((GlobalStatus.light < AppConfig.getLowLightThreshold()) && (GlobalStatus.getSystemBrightnessProgress() <= 1)) {
                         // 暗光模式
                         keepenBrightness = 0f;
                     }
@@ -212,11 +212,11 @@ public class BrightnessManager {
             }
         } else {
             // 智能亮度关
-            // 阳光模式默认开
-            GlobalStatus.openFilter();
-            GlobalStatus.setBrightness(GlobalStatus.getSystemBrightness());
+
+            keepenBrightness = GlobalStatus.getSystemBrightness();
 
             if (GlobalStatus.light > AppConfig.getHighLightThreshold()) {
+                // 阳光模式
                 // 开启自动亮度
                 GlobalStatus.closeFilter();
                 openSystemAutoBrightnessMode();
@@ -225,6 +225,13 @@ public class BrightnessManager {
                 closeSystemAutoBrightnessMode();
                 GlobalStatus.openFilter();
             }
+
+            if ((GlobalStatus.light < AppConfig.getLowLightThreshold()) && (GlobalStatus.getSystemBrightnessProgress() <= 1)) {
+                // 暗光模式
+                keepenBrightness = 0f;
+            }
+
+            GlobalStatus.setBrightness(keepenBrightness);
         }
     }
 

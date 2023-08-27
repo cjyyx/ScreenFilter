@@ -28,27 +28,30 @@ public class AppConfig {
      * 亮度调节系数，与亮度调节算法有关，取值 [0,1]
      */
     public static final float BRIGHTNESS_ADJUSTMENT_FACTOR = 0.71f;
-    /**
-     * 低光照阈值，单位 lux
-     */
-    public static final float LOW_LIGHT_THRESHOLD = 5f;
+
+
 
 
     // 默认配置
     private static final float default_highLightThreshold = 4000f;
+    private static final float default_lowLightThreshold = 5f;
     private static final float default_minHardwareBrightness = 0.5f;
     private static final float default_maxFilterOpacity = 0.9f;
     private static final float default_brightnessAdjustmentIncreaseTolerance = 0.04f;
-    private static final float default_brightnessAdjustmentDecreaseTolerance = 0.28f;
+    private static final float default_brightnessAdjustmentDecreaseTolerance = 0.24f;
     private static final boolean default_filterOpenMode = true;
-    private static final boolean default_intelligentBrightnessOpenMode = false;
-    private static final boolean default_hideInMultitaskingInterface = false;
+    private static final boolean default_intelligentBrightnessOpenMode = true;
+    private static final boolean default_hideInMultitaskingInterface = true;
 
     private static Context context = null;
     private static SharedPreferences shared = null;
     private static SharedPreferences.Editor editor = null;
     // 配置
     private static float highLightThreshold;
+    /**
+     * 低光照阈值，单位 lux
+     */
+    private static float lowLightThreshold;
     private static float minHardwareBrightness;
     private static float maxFilterOpacity;
     /**
@@ -77,6 +80,15 @@ public class AppConfig {
     public static void setHighLightThreshold(float hlt) {
         highLightThreshold = hlt;
         editor.putFloat("highLightThreshold", highLightThreshold);
+        editor.apply();
+    }
+    public static float getLowLightThreshold() {
+        return lowLightThreshold;
+    }
+
+    public static void setLowLightThreshold(float lowLightThreshold) {
+        AppConfig.lowLightThreshold = lowLightThreshold;
+        editor.putFloat("lowLightThreshold", AppConfig.lowLightThreshold);
         editor.apply();
     }
 
@@ -232,6 +244,7 @@ public class AppConfig {
         setTempControlMode(false);
 
         highLightThreshold = shared.getFloat("highLightThreshold", default_highLightThreshold);
+        lowLightThreshold = shared.getFloat("lowLightThreshold", default_lowLightThreshold);
         maxFilterOpacity = shared.getFloat("maxFilterOpacity", default_maxFilterOpacity);
         minHardwareBrightness = shared.getFloat("minHardwareBrightness", default_minHardwareBrightness);
         brightnessAdjustmentIncreaseTolerance = shared.getFloat("brightnessAdjustmentIncreaseTolerance", default_brightnessAdjustmentIncreaseTolerance);
@@ -261,6 +274,7 @@ public class AppConfig {
         setBrightnessAdjustmentDecreaseTolerance(default_brightnessAdjustmentDecreaseTolerance);
 
         setHighLightThreshold(default_highLightThreshold);
+        setLowLightThreshold(default_lowLightThreshold);
         setMaxFilterOpacity(default_maxFilterOpacity);
         setMinHardwareBrightness(default_minHardwareBrightness);
 

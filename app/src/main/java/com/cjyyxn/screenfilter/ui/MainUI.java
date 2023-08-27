@@ -124,6 +124,18 @@ public class MainUI {
                 (sb) -> sb.setProgress((int) ((AppConfig.getHighLightThreshold() - 1000f) * (50f / 5000f) + 0.5))
         );
         combinationControl.addSeekBarControl(
+                "暗光模式阈值", 0, 20,
+                (P) -> String.format("%.0f lux", AppConfig.getLowLightThreshold()),
+                (sb, P, fromUser) -> {
+                    if (fromUser) {
+                        AppConfig.setLowLightThreshold((float) P);
+                    }
+                },
+                (sb) -> CombinationControl.pass(),
+                (sb) -> CombinationControl.pass(),
+                (sb) -> sb.setProgress((int) (AppConfig.getLowLightThreshold() + 0.5f))
+        );
+        combinationControl.addSeekBarControl(
                 "亮度调高容差", 0, 50,
                 (P) -> String.format("%.2f", AppConfig.getBrightnessAdjustmentIncreaseTolerance()),
                 (sb, P, fromUser) -> {
