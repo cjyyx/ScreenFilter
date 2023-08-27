@@ -154,8 +154,8 @@ public class BrightnessManager {
                         // 反馈用户调节
 
                         // 与自动调节相反
-                        float btoler_high = bset + AppConfig.getBrightnessAdjustmentDecreaseTolerance() * (0.5f + bset * bset);
-                        float btoler_low = bset - AppConfig.getBrightnessAdjustmentIncreaseTolerance() * (0.5f + bset * bset);
+                        float btoler_high = bset + AppConfig.getBrightnessAdjustmentDecreaseTolerance();
+                        float btoler_low = bset - AppConfig.getBrightnessAdjustmentIncreaseTolerance();
                         float userb = currentSystemBrightness;
                         if (userb < btoler_low) {
                             // 用户调节亮度过低
@@ -168,8 +168,8 @@ public class BrightnessManager {
                             keepenBrightness = userb;
                         }
                     } else {
-                        float btoler_high = keepenBrightness + AppConfig.getBrightnessAdjustmentIncreaseTolerance() * (0.5f + keepenBrightness * keepenBrightness);
-                        float btoler_low = keepenBrightness - AppConfig.getBrightnessAdjustmentDecreaseTolerance() * (0.5f + keepenBrightness * keepenBrightness);
+                        float btoler_high = keepenBrightness + AppConfig.getBrightnessAdjustmentIncreaseTolerance();
+                        float btoler_low = keepenBrightness - AppConfig.getBrightnessAdjustmentDecreaseTolerance();
 
                         // 用来稳定亮度
                         if ((bset < btoler_low) || (bset > btoler_high)) {

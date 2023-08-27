@@ -71,6 +71,24 @@ public class CombinationControl {
         ));
     }
 
+    public void addJumpLabel(
+            String name,
+            Runnable  on_click
+    ){
+        LinearLayout cloneLayout = (LinearLayout) LayoutInflater.from(context)
+                .inflate(R.layout.jumplabel_control, null);
+
+        TextView tv_control_name = cloneLayout.findViewById(R.id.tv_control_name);
+        tv_control_name.setText(name);
+        cloneLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                on_click.run();
+            }
+        });
+        linearLayout.addView(cloneLayout);
+    }
+
     public void addLine() {
         View view1 = new View(context);
         LinearLayout.LayoutParams layoutParams1 = new LinearLayout.LayoutParams(
@@ -80,7 +98,7 @@ public class CombinationControl {
         View view2 = new View(context);
         view2.setBackgroundColor(ContextCompat.getColor(context, android.R.color.darker_gray)); // 设置背景颜色
         LinearLayout.LayoutParams layoutParams2 = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, 2);
+                LinearLayout.LayoutParams.MATCH_PARENT, 3);
         linearLayout.addView(view2, layoutParams2);
 
         View view3 = new View(context);
@@ -136,8 +154,6 @@ public class CombinationControl {
             this.onStartTouch = onStartTouch;
             this.onStopTouch = onStopTouch;
             this.updateMethod = updateMethod;
-
-            // TODO layout 高度设置无效
 
             LinearLayout cloneLayout = (LinearLayout) LayoutInflater.from(context)
                     .inflate(R.layout.seekbar_control, null);

@@ -3,6 +3,7 @@ package com.cjyyxn.screenfilter;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -37,8 +38,8 @@ public class AppConfig {
     private static final float default_highLightThreshold = 4000f;
     private static final float default_minHardwareBrightness = 0.5f;
     private static final float default_maxFilterOpacity = 0.9f;
-    private static final float default_brightnessAdjustmentIncreaseTolerance = 0.13f;
-    private static final float default_brightnessAdjustmentDecreaseTolerance = 0.46f;
+    private static final float default_brightnessAdjustmentIncreaseTolerance = 0.04f;
+    private static final float default_brightnessAdjustmentDecreaseTolerance = 0.28f;
     private static final boolean default_filterOpenMode = true;
     private static final boolean default_intelligentBrightnessOpenMode = false;
     private static final boolean default_hideInMultitaskingInterface = false;

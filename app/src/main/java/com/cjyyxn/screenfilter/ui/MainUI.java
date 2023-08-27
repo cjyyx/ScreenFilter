@@ -4,9 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
-import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,14 +24,6 @@ public class MainUI {
 
     private final TextView tv_main_light;
     private final TextView tv_main_brightness;
-    private final Button bt_main_open_brightness_point_view;
-
-
-    private final Button bt_main_load_default_config;
-    private final Button bt_main_open_preparatory_view;
-
-
-    private final Button bt_main_open_debug_view;
 
     private final LinearLayout ll0_list_main;
     private final CombinationControl combinationControl;
@@ -43,10 +33,7 @@ public class MainUI {
 
         tv_main_light = mainActivity.findViewById(R.id.tv_main_light);
         tv_main_brightness = mainActivity.findViewById(R.id.tv_main_brightness);
-        bt_main_open_brightness_point_view = mainActivity.findViewById(R.id.bt_main_open_brightness_point_view);
-        bt_main_load_default_config = mainActivity.findViewById(R.id.bt_main_load_default_config);
-        bt_main_open_preparatory_view = mainActivity.findViewById(R.id.bt_main_open_preparatory_view);
-        bt_main_open_debug_view = mainActivity.findViewById(R.id.bt_main_open_debug_view);
+
         ll0_list_main = mainActivity.findViewById(R.id.ll0_list_main);
         combinationControl = new CombinationControl(ll0_list_main, mainActivity);
 
@@ -97,7 +84,11 @@ public class MainUI {
         combinationControl.addSeekBarControl(
                 "最低硬件亮度", 0, 100,
                 (P) -> String.format("%.0f %%", AppConfig.getMinHardwareBrightness() * 100),
-                (sb, P, fromUser) -> AppConfig.setMinHardwareBrightness(((float) P) / 100f),
+                (sb, P, fromUser) -> {
+                    if (fromUser) {
+                        AppConfig.setMinHardwareBrightness(((float) P) / 100f);
+                    }
+                },
                 (sb) -> CombinationControl.pass(),
                 (sb) -> CombinationControl.pass(),
                 (sb) -> sb.setProgress((int) (AppConfig.getMinHardwareBrightness() * 100 + 0.5f))
@@ -108,7 +99,11 @@ public class MainUI {
         combinationControl.addSeekBarControl(
                 "最高滤镜\n不透明度", 60, 100,
                 (P) -> String.format("%.0f %%", AppConfig.getMaxFilterOpacity() * 100),
-                (sb, P, fromUser) -> AppConfig.setMaxFilterOpacity(((float) P) / 100f),
+                (sb, P, fromUser) -> {
+                    if (fromUser) {
+                        AppConfig.setMaxFilterOpacity(((float) P) / 100f);
+                    }
+                },
                 (sb) -> CombinationControl.pass(),
                 (sb) -> CombinationControl.pass(),
                 (sb) -> sb.setProgress((int) (AppConfig.getMaxFilterOpacity() * 100f + 0.5f))
@@ -119,39 +114,61 @@ public class MainUI {
         combinationControl.addSeekBarControl(
                 "阳光模式阈值", 0, 50,
                 (P) -> String.format("%.0f lux", AppConfig.getHighLightThreshold()),
-                (sb, P, fromUser) -> AppConfig.setHighLightThreshold(1000f + ((float) P) * (5000f / 50f)),
+                (sb, P, fromUser) -> {
+                    if (fromUser) {
+                        AppConfig.setHighLightThreshold(1000f + ((float) P) * (5000f / 50f));
+                    }
+                },
                 (sb) -> CombinationControl.pass(),
                 (sb) -> CombinationControl.pass(),
                 (sb) -> sb.setProgress((int) ((AppConfig.getHighLightThreshold() - 1000f) * (50f / 5000f) + 0.5))
         );
         combinationControl.addSeekBarControl(
-                "亮度调高容差", 0, 100,
+                "亮度调高容差", 0, 50,
                 (P) -> String.format("%.2f", AppConfig.getBrightnessAdjustmentIncreaseTolerance()),
-                (sb, P, fromUser) -> AppConfig.setBrightnessAdjustmentIncreaseTolerance(((float) P) / 100f),
+                (sb, P, fromUser) -> {
+                    if (fromUser) {
+                        AppConfig.setBrightnessAdjustmentIncreaseTolerance(((float) P) / 100f);
+                    }
+                },
                 (sb) -> CombinationControl.pass(),
                 (sb) -> CombinationControl.pass(),
-                (sb) -> sb.setProgress((int) (AppConfig.getBrightnessAdjustmentIncreaseTolerance() * 100 + 0.5f))
+                (sb) -> sb.setProgress((int) (AppConfig.getBrightnessAdjustmentIncreaseTolerance() * 100f + 0.5f))
         );
         combinationControl.addSeekBarControl(
-                "亮度调低容差", 0, 100,
+                "亮度调低容差", 0, 50,
                 (P) -> String.format("%.2f", AppConfig.getBrightnessAdjustmentDecreaseTolerance()),
-                (sb, P, fromUser) -> AppConfig.setBrightnessAdjustmentDecreaseTolerance(((float) P) / 100f),
+                (sb, P, fromUser) -> {
+                    if (fromUser) {
+                        AppConfig.setBrightnessAdjustmentDecreaseTolerance(((float) P) / 100f);
+                    }
+                },
                 (sb) -> CombinationControl.pass(),
                 (sb) -> CombinationControl.pass(),
-                (sb) -> sb.setProgress((int) (AppConfig.getBrightnessAdjustmentDecreaseTolerance() * 100 + 0.5f))
+                (sb) -> sb.setProgress((int) (AppConfig.getBrightnessAdjustmentDecreaseTolerance() * 100f + 0.5f))
         );
 
-        bt_main_open_brightness_point_view.setOnClickListener(view -> mainActivity.startActivity(new Intent(mainActivity, BrightnessPointActivity.class)));
+        combinationControl.addLine();
 
-        bt_main_load_default_config.setOnClickListener(view -> {
-            AppConfig.loadDefaultConfig();
-            Toast.makeText(mainActivity, "默认配置加载成功", Toast.LENGTH_SHORT).show();
-        });
-
-        bt_main_open_preparatory_view.setOnClickListener(view -> mainActivity.startActivity(new Intent(mainActivity, PreparatoryActivity.class)));
-
-        bt_main_open_debug_view.setOnClickListener(view -> mainActivity.startActivity(new Intent(mainActivity, DebugActivity.class)));
-
+        combinationControl.addJumpLabel(
+                "打开准备界面",
+                () -> mainActivity.startActivity(new Intent(mainActivity, PreparatoryActivity.class))
+        );
+        combinationControl.addJumpLabel(
+                "打开亮度-光照曲线设置界面",
+                () -> mainActivity.startActivity(new Intent(mainActivity, BrightnessPointActivity.class))
+        );
+        combinationControl.addJumpLabel(
+                "加载默认配置",
+                () -> {
+                    AppConfig.loadDefaultConfig();
+                    Toast.makeText(mainActivity, "默认配置加载成功", Toast.LENGTH_SHORT).show();
+                }
+        );
+        combinationControl.addJumpLabel(
+                "打开调试界面",
+                () -> mainActivity.startActivity(new Intent(mainActivity, DebugActivity.class))
+        );
 
     }
 
