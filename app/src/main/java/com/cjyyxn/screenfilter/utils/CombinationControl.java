@@ -1,5 +1,8 @@
 package com.cjyyxn.screenfilter.utils;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Handler;
@@ -73,8 +76,8 @@ public class CombinationControl {
 
     public void addJumpLabel(
             String name,
-            Runnable  on_click
-    ){
+            Runnable on_click
+    ) {
         LinearLayout cloneLayout = (LinearLayout) LayoutInflater.from(context)
                 .inflate(R.layout.jumplabel_control, null);
 
@@ -83,6 +86,18 @@ public class CombinationControl {
         cloneLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // 执行点击动效
+                ObjectAnimator animator = ObjectAnimator.ofFloat(cloneLayout, "translationX", 0f, 100f);
+                animator.setDuration(100);
+                animator.addListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        // 动画结束时进行恢复操作
+                        cloneLayout.setTranslationX(0f);
+                    }
+                });
+                animator.start();
+
                 on_click.run();
             }
         });

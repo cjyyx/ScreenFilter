@@ -26,14 +26,13 @@ import com.androidplot.xy.XYSeries;
 import com.cjyyxn.screenfilter.AppConfig;
 import com.cjyyxn.screenfilter.GlobalStatus;
 import com.cjyyxn.screenfilter.R;
+import com.cjyyxn.screenfilter.utils.TimerControl;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.stream.Collectors;
 
-@SuppressLint("DefaultLocale")
+@SuppressLint({"DefaultLocale", "InflateParams"})
 public class BrightnessPointActivity extends AppCompatActivity {
 
     private XYPlot plot;
@@ -50,7 +49,7 @@ public class BrightnessPointActivity extends AppCompatActivity {
     private Button bt_list_brightness_point_add;
 
     private LinearLayout ll_list_brightness_point_container;
-    private boolean isInBackground = false;
+    private TimerControl timerControl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,20 +66,20 @@ public class BrightnessPointActivity extends AppCompatActivity {
 
         showPlot();
         initBrightnessDialog();
-        addTimer();
+        setTimer();
         addBrightnessPointListView();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        isInBackground = true;
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        isInBackground = false;
+        timerControl.start(0, 200);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        timerControl.stop();
     }
 
     private void showPlot() {
@@ -135,6 +134,7 @@ public class BrightnessPointActivity extends AppCompatActivity {
     /**
      * 初始化光照-亮度对应点对话框
      */
+
     private void initBrightnessDialog() {
         dialogBrightnessView = LayoutInflater.from(this).inflate(R.layout.dialog_brightness_point, null);
         sb_dialog_brightness_point_light = dialogBrightnessView.findViewById(R.id.sb_dialog_brightness_point_light);
@@ -266,24 +266,16 @@ public class BrightnessPointActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    private void addTimer() {
-        Timer timer = new Timer();
-        TimerTask task = new TimerTask() {
-            @Override
-            public void run() {
-                if (!isInBackground) {
-                    new Handler(Looper.getMainLooper()).post(() -> {
-                        // 在UI线程中更新UI组件
+    private void setTimer() {
+        timerControl = new TimerControl(() -> {
+            new Handler(Looper.getMainLooper()).post(() -> {
+                // 在UI线程中更新UI组件
 //                        Log.d("ccjy", "更新 BrightnessPointActivityUI");
-                        if (tv_dialog_sensor_light != null) {
-                            tv_dialog_sensor_light.setText(String.format("%.1f lux", GlobalStatus.light));
-                        }
-                    });
+                if (tv_dialog_sensor_light != null) {
+                    tv_dialog_sensor_light.setText(String.format("%.1f lux", GlobalStatus.light));
                 }
-            }
-        };
-
-        timer.schedule(task, 0, 200);
+            });
+        });
     }
 
     /**

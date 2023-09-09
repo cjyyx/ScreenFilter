@@ -16,9 +16,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.cjyyxn.screenfilter.AppConfig;
 import com.cjyyxn.screenfilter.GlobalStatus;
 import com.cjyyxn.screenfilter.R;
+import com.cjyyxn.screenfilter.utils.TimerControl;
 
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -29,7 +28,7 @@ public class DebugActivity extends AppCompatActivity {
     @SuppressLint("UseSwitchCompatOrMaterialCode")
     private Switch sw_debug_temp_control;
     private LinearLayout ll_list_debug_seekbar_control;
-    private boolean isInBackground = false;
+    private TimerControl timerControl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,19 +40,19 @@ public class DebugActivity extends AppCompatActivity {
         ll_list_debug_seekbar_control = findViewById(R.id.ll_list_debug_seekbar_control);
 
         setUI();
-        addDebugViewTimer();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        isInBackground = true;
+        setTimer();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        isInBackground = false;
+        timerControl.start(0, 200);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        timerControl.stop();
     }
 
     private void setUI() {
@@ -123,39 +122,29 @@ public class DebugActivity extends AppCompatActivity {
         ll_list_debug_seekbar_control.addView(cloneLayout);
     }
 
-    private void addDebugViewTimer() {
-        Timer timer = new Timer();
-        TimerTask task = new TimerTask() {
-            @Override
-            public void run() {
-
-                if (!isInBackground) {
-                    new Handler(Looper.getMainLooper()).post(() -> {
-                        // 在UI线程中更新UI组件
-
-//                        Log.d("ccjy", "更新 DebugActivityUI");
-                        tv_debug_run_info.setText("");
-                        tv_debug_run_info.append("应用运行信息:");
-                        tv_debug_run_info.append(String.format(
-                                "\n当前环境光照 %.2f lux, 屏幕亮度 %.2f %%",
-                                GlobalStatus.light, GlobalStatus.getBrightness() * 100
-                        ));
-                        tv_debug_run_info.append(String.format(
-                                "\n当前系统亮度条 int 值 %d, 系统亮度 %.2f %%",
-                                GlobalStatus.getSystemBrightnessProgress(), GlobalStatus.getSystemBrightness() * 100
-                        ));
-                        tv_debug_run_info.append(String.format(
-                                "\n当前滤镜亮度 %.2f %%, 滤镜不透明度 %.2f %%",
-                                GlobalStatus.getHardwareBrightness() * 100, GlobalStatus.getFilterOpacity() * 100
-                        ));
-                        tv_debug_run_info.append(String.format(
-                                "\n当前屏幕实际亮度(估计值) %.2f nit", GlobalStatus.getBrightness() * AppConfig.MAX_SCREEN_LIGHT
-                        ));
-                    });
-                }
-            }
-        };
-        timer.schedule(task, 0, 200);
+    private void setTimer() {
+        timerControl = new TimerControl(() -> {
+            new Handler(Looper.getMainLooper()).post(() -> {
+                // 在UI线程中更新UI组件
+                tv_debug_run_info.setText("");
+                tv_debug_run_info.append("应用运行信息:");
+                tv_debug_run_info.append(String.format(
+                        "\n当前环境光照 %.2f lux, 屏幕亮度 %.2f %%",
+                        GlobalStatus.light, GlobalStatus.getBrightness() * 100
+                ));
+                tv_debug_run_info.append(String.format(
+                        "\n当前系统亮度条 int 值 %d, 系统亮度 %.2f %%",
+                        GlobalStatus.getSystemBrightnessProgress(), GlobalStatus.getSystemBrightness() * 100
+                ));
+                tv_debug_run_info.append(String.format(
+                        "\n当前滤镜亮度 %.2f %%, 滤镜不透明度 %.2f %%",
+                        GlobalStatus.getHardwareBrightness() * 100, GlobalStatus.getFilterOpacity() * 100
+                ));
+                tv_debug_run_info.append(String.format(
+                        "\n当前屏幕实际亮度(估计值) %.2f nit", GlobalStatus.getBrightness() * AppConfig.MAX_SCREEN_LIGHT
+                ));
+            });
+        });
     }
 
 }

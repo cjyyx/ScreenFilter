@@ -14,12 +14,10 @@ public class AppAccessibilityService extends AccessibilityService {
 
     @Override
     public void onAccessibilityEvent(AccessibilityEvent accessibilityEvent) {
-
     }
 
     @Override
     public void onInterrupt() {
-
     }
 
     /**

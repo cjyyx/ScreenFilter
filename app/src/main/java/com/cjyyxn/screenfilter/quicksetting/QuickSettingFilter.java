@@ -1,5 +1,7 @@
 package com.cjyyxn.screenfilter.quicksetting;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.service.quicksettings.Tile;
 import android.service.quicksettings.TileService;
 import android.widget.Toast;
@@ -8,6 +10,7 @@ import com.cjyyxn.screenfilter.AppConfig;
 
 import java.util.Timer;
 import java.util.TimerTask;
+
 
 public class QuickSettingFilter extends TileService {
 
@@ -52,13 +55,17 @@ public class QuickSettingFilter extends TileService {
         // 如果磁贴为激活状态 被点击 则动作为关闭滤镜
         if (toggleState == Tile.STATE_ACTIVE) {
             AppConfig.setFilterOpenMode(false);
-            Toast.makeText(this, "关闭屏幕滤镜", Toast.LENGTH_SHORT).show();
+            new Handler(Looper.getMainLooper()).post(() -> {
+                Toast.makeText(this, "关闭屏幕滤镜", Toast.LENGTH_SHORT).show();
+            });
             getQsTile().setState(Tile.STATE_INACTIVE);
         }
         // 如果磁贴为未激活状态 被点击 则动作为开启滤镜
         else if (toggleState == Tile.STATE_INACTIVE) {
             AppConfig.setFilterOpenMode(true);
-            Toast.makeText(this, "打开屏幕滤镜", Toast.LENGTH_SHORT).show();
+            new Handler(Looper.getMainLooper()).post(() -> {
+                Toast.makeText(this, "打开屏幕滤镜", Toast.LENGTH_SHORT).show();
+            });
             getQsTile().setState(Tile.STATE_ACTIVE);
         }
         getQsTile().updateTile();

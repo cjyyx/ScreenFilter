@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,7 +20,7 @@ import com.cjyyxn.screenfilter.ui.PreparatoryActivity;
 
 public class MainActivity extends AppCompatActivity {
 
-    public boolean isInBackground = false;
+    private MainUI mainUI;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,14 +30,21 @@ public class MainActivity extends AppCompatActivity {
         AppConfig.init(this);
 
         Log.d("ccjy", "MainActivity created");
-        new MainUI(this);
+        mainUI = new MainUI(this);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        all_judge();
+
+        mainUI.onResume();
+    }
 
     @Override
     protected void onPause() {
         super.onPause();
-        isInBackground = true;
 
         if (AppConfig.isHideInMultitaskingInterface()) {
             try {
@@ -43,22 +52,21 @@ public class MainActivity extends AppCompatActivity {
                 for (ActivityManager.AppTask task : service.getAppTasks()) {
                     if (task.getTaskInfo().taskId == getTaskId()) {
                         task.setExcludeFromRecents(true);
-//                        Toast.makeText(this, "多任务界面隐藏成功", Toast.LENGTH_SHORT).show();
+                        new Handler(Looper.getMainLooper()).post(() -> {
+                            Toast.makeText(this, "多任务界面隐藏成功", Toast.LENGTH_SHORT).show();
+                        });
                     }
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
-//                Toast.makeText(this, "多任务界面隐藏失败", Toast.LENGTH_SHORT).show();
+                new Handler(Looper.getMainLooper()).post(() -> {
+                    Toast.makeText(this, "多任务界面隐藏失败", Toast.LENGTH_SHORT).show();
+                });
             }
         }
-    }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        isInBackground = false;
+        mainUI.onPause();
 
-        all_judge();
     }
 
     public void all_judge() {
@@ -98,7 +106,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void ready_judge() {
         if (!GlobalStatus.isReady()) {
-            Toast.makeText(this, "未设置必须的权限", Toast.LENGTH_SHORT).show();
+            new Handler(Looper.getMainLooper()).post(() -> {
+                Toast.makeText(this, "未设置必须的权限", Toast.LENGTH_SHORT).show();
+            });
             startActivity(new Intent(this, PreparatoryActivity.class));
         }
     }

@@ -16,13 +16,16 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/Theme.ScreenFilter">
+        <activity
+            android:name=".ui.ReadmeActivity"
+            android:exported="false" />
 
         <service
             android:name=".AppAccessibilityService"
             android:exported="true"
-            android:launchMode="singleTask"
             android:hardwareAccelerated="true"
             android:label="@string/app_name"
+            android:launchMode="singleTask"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -30,6 +33,7 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.accessibilityservice.AccessibilityService" />
             </intent-filter>
+
             <meta-data
                 android:name="android.accessibilityservice"
                 android:resource="@xml/app_accessibility" />
@@ -38,38 +42,38 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:launchMode="singleTask"
-            android:hardwareAccelerated="true">
+            android:hardwareAccelerated="true"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".ui.DebugActivity"
             android:exported="false"
-            android:launchMode="singleTask"
-            android:hardwareAccelerated="true"/>
+            android:hardwareAccelerated="true"
+            android:launchMode="singleTask" />
         <activity
             android:name=".ui.BrightnessPointActivity"
             android:exported="false"
-            android:launchMode="singleTask"
-            android:hardwareAccelerated="true"/>
+            android:hardwareAccelerated="true"
+            android:launchMode="singleTask" />
         <activity
             android:name=".ui.PreparatoryActivity"
             android:exported="true"
-            android:launchMode="singleTask"
-            android:hardwareAccelerated="true"/>
+            android:hardwareAccelerated="true"
+            android:launchMode="singleTask" />
 
         <service
             android:name=".quicksetting.QuickSettingFilter"
             android:enabled="true"
             android:exported="true"
+            android:hardwareAccelerated="true"
             android:icon="@drawable/filter"
             android:label="屏幕滤镜"
             android:launchMode="singleTask"
-            android:hardwareAccelerated="true"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
             <intent-filter>
                 <action android:name="android.service.quicksettings.action.QS_TILE" />
@@ -79,10 +83,10 @@
             android:name=".quicksetting.QuickSettingIntelligentBrightness"
             android:enabled="true"
             android:exported="true"
+            android:hardwareAccelerated="true"
             android:icon="@drawable/intelligent_brightness"
             android:label="智能亮度"
             android:launchMode="singleTask"
-            android:hardwareAccelerated="true"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
             <intent-filter>
                 <action android:name="android.service.quicksettings.action.QS_TILE" />
@@ -92,10 +96,10 @@
             android:name=".quicksetting.QuickSettingScreenShot"
             android:enabled="true"
             android:exported="true"
+            android:hardwareAccelerated="true"
             android:icon="@drawable/screenshot"
             android:label="正常截屏"
             android:launchMode="singleTask"
-            android:hardwareAccelerated="true"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
             <intent-filter>
                 <action android:name="android.service.quicksettings.action.QS_TILE" />

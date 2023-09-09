@@ -33,12 +33,12 @@ public class AppConfig {
 
 
     // 默认配置
-    private static final float default_highLightThreshold = 4000f;
+    private static final float default_highLightThreshold = 5000f;
     private static final float default_lowLightThreshold = 5f;
     private static final float default_minHardwareBrightness = 0.5f;
     private static final float default_maxFilterOpacity = 0.9f;
     private static final float default_brightnessAdjustmentIncreaseTolerance = 0.04f;
-    private static final float default_brightnessAdjustmentDecreaseTolerance = 0.24f;
+    private static final float default_brightnessAdjustmentDecreaseTolerance = 0.21f;
     private static final boolean default_filterOpenMode = true;
     private static final boolean default_intelligentBrightnessOpenMode = true;
     private static final boolean default_hideInMultitaskingInterface = true;
