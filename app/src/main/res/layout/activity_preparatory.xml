@@ -37,20 +37,16 @@
                 android:layout_height="match_parent"
                 android:autoLink="web"
                 android:text="
-1、项目源码:
+1、github 项目源码:
 \n
 https://github.com/cjyyx/ScreenFilter
 \n
 应用原理：
 \n
 https://zhuanlan.zhihu.com/p/642886728
-\n\n
-注意：
-\n- 支持直接拖动系统状态栏亮度条来控制亮度
-\n- 当环境光照较高时，应用会自动关闭屏幕滤镜并打开系统自动亮度，从而使屏幕能够达到最大激发亮度
-\n- 开启滤镜时不要开启系统纸质护眼，否则会造成花屏
+\n
 "
-                android:textSize="14sp" />
+                android:textSize="16sp" />
 
             <View
                 android:layout_width="match_parent"
