@@ -12,7 +12,7 @@
 4. 本应用在开发时没有考虑兼容性，目前只能保证在我的手机上正常运行。我的手机系统是 MIUI14
 5. 开启滤镜时不要开启系统纸质护眼，否则会造成花屏
 
-本应用参考了开源项目 https://www.coolapk.com/apk/com.omarea.filter
+本应用参考了开源项目 https://github.com/helloklf/ScreenFilter
 
 ## 下载地址
 
