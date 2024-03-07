@@ -21,9 +21,8 @@ public class AppConfig {
     /**
      * Settings.System.SCREEN_BRIGHTNESS 相关的值
      * 安卓开发者文档中说取值是 0-255
-     * 但 MIUI14 中是 1-128
      */
-    public static final int SETTING_SCREEN_BRIGHTNESS = 128;
+    public static final int SETTING_SCREEN_BRIGHTNESS = 255;
     /**
      * 亮度调节系数，与亮度调节算法有关，取值 [0,1]
      */
