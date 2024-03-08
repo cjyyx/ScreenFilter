@@ -3,11 +3,13 @@ package com.cjyyxn.screenfilter;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 @SuppressLint("StaticFieldLeak")
@@ -21,9 +23,30 @@ public class AppConfig {
     /**
      * Settings.System.SCREEN_BRIGHTNESS 相关的值
      * 安卓开发者文档中说取值是 0-255
-     * 但 MIUI14 中是 1-128
      */
-    public static final int SETTING_SCREEN_BRIGHTNESS = 128;
+    public static final int SETTING_SCREEN_BRIGHTNESS = getSettingScreenBrightness();
+
+    private static String getSystemProperty(String prop) {
+        try {
+            Process p = Runtime.getRuntime().exec("getprop " + prop);
+            try (BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()), 1024)) {
+                return input.readLine();
+            } finally {
+                p.destroy();
+            }
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    private static int getSettingScreenBrightness() {
+        String miui = getSystemProperty("ro.miui.ui.version.name");
+        if (miui != null && !miui.isEmpty()) {
+            return 128;
+        }
+        return 255;
+    }
+
     /**
      * 亮度调节系数，与亮度调节算法有关，取值 [0,1]
      */
