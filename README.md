@@ -8,7 +8,7 @@
 
 1. 支持直接拖动系统状态栏亮度条来控制亮度
 2. 当环境光照较高时，应用会自动关闭屏幕滤镜并打开系统自动亮度，从而使屏幕能够达到最大激发亮度
-3. 最低支持版本安卓11
+3. 最低支持版本安卓10
 4. 本应用在开发时没有考虑兼容性，目前只能保证在我的手机上正常运行。我的手机系统是 MIUI14
 5. 开启滤镜时不要开启系统纸质护眼，否则会造成花屏
 
@@ -95,3 +95,8 @@ https://www.123pan.com/s/Be4Hjv-fUUtv.html
 ### QuickSetting
 
 与状态栏磁贴服务有关的模块位于 quicksetting 文件夹下
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=cjyyx/ScreenFilter&type=Date)](https://star-history.com/#cjyyx/ScreenFilter&Date)
+
