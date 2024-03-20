@@ -20,11 +20,10 @@
 
 https://github.com/cjyyx/ScreenFilter/releases
 
-下载链接 2：蓝奏云
+下载链接 2：123云盘
 
-https://wwis.lanzouq.com/b04whksif
+https://www.123pan.com/s/Be4Hjv-fUUtv.html
 
-密码:1234
 
 ## 应用截图
 
