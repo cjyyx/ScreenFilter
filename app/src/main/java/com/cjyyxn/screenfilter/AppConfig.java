@@ -3,6 +3,7 @@ package com.cjyyxn.screenfilter;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -20,9 +21,11 @@ public class AppConfig {
      * 手机屏幕的最大亮度，单位为 nit
      */
     public static final float MAX_SCREEN_LIGHT = 500f;
+
     /**
      * Settings.System.SCREEN_BRIGHTNESS 相关的值
-     * 安卓开发者文档中说取值是 0-255
+     * 安卓系统取值是 0-255
+     * MIUI取值是 0-128
      */
     public static final int SETTING_SCREEN_BRIGHTNESS = getSettingScreenBrightness();
 
@@ -42,8 +45,10 @@ public class AppConfig {
     private static int getSettingScreenBrightness() {
         String miui = getSystemProperty("ro.miui.ui.version.name");
         if (miui != null && !miui.isEmpty()) {
+            Log.d("ccjy", "检测到 MIUI 系统");
             return 128;
         }
+        Log.d("ccjy", "检测到非 MIUI 系统");
         return 255;
     }
 
