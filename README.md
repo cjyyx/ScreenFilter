@@ -12,18 +12,19 @@
 4. 本应用在开发时没有考虑兼容性，目前只能保证在我的手机上正常运行。我的手机系统是 MIUI14
 5. 开启滤镜时不要开启系统纸质护眼，否则会造成花屏
 
-本应用参考了开源项目 https://github.com/helloklf/ScreenFilter
+本应用参考了开源项目 <https://github.com/helloklf/ScreenFilter>
 
 ## 下载地址
 
 下载链接 1：github release
-
-https://github.com/cjyyx/ScreenFilter/releases
+<https://github.com/cjyyx/ScreenFilter/releases>
 
 下载链接 2：123云盘
+<https://www.123pan.com/s/Be4Hjv-fUUtv.html>
 
-https://www.123pan.com/s/Be4Hjv-fUUtv.html
+## 应用原理
 
+详见 <https://www.cnblogs.com/cjyyx/p/18268818>
 
 ## 应用截图
 
@@ -31,10 +32,6 @@ https://www.123pan.com/s/Be4Hjv-fUUtv.html
 ![](assets/Screenshot_2.jpg)
 ![](assets/Screenshot_3.jpg)
 ![](assets/Screenshot_4.jpg)
-
-## 应用原理
-
-详见 https://zhuanlan.zhihu.com/p/642886728
 
 ## 应用使用说明
 
@@ -51,10 +48,9 @@ https://www.123pan.com/s/Be4Hjv-fUUtv.html
 - 亮度调低容差：与智能亮度调节有关
 - 亮度-光照曲线设置界面：可以通过增减修改光照-亮度对应点来调整亮度-光照曲线
 
-
 ## 项目依赖
 
-使用了 androidplot 库, https://github.com/halfhp/androidplot
+使用了 androidplot 库 <https://github.com/halfhp/androidplot>
 
 ## 项目开发
 
