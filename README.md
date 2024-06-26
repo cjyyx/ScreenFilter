@@ -27,10 +27,10 @@ https://www.123pan.com/s/Be4Hjv-fUUtv.html
 
 ## 应用截图
 
-![](Image/Screenshot_1.jpg)
-![](Image/Screenshot_2.jpg)
-![](Image/Screenshot_3.jpg)
-![](Image/Screenshot_4.jpg)
+![](assets/Screenshot_1.jpg)
+![](assets/Screenshot_2.jpg)
+![](assets/Screenshot_3.jpg)
+![](assets/Screenshot_4.jpg)
 
 ## 应用原理
 
