@@ -1,3 +1,5 @@
+P.S. 在 Google Play 上新发布的[屏幕调光器 — 减少闪烁](https://play.google.com/store/apps/details?id=dev.rewhex.screendimmer&hl=zh)也实现了相同功能！
+
 # 滤镜护眼防频闪
 
 ## 应用简介
